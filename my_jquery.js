@@ -10,14 +10,16 @@ $(document).ready(function() {
     // Convert action
     convertButton.off().on('click', function(event) {
         event.preventDefault();
-        $('.convert_page').show();
         $('.list_page').hide();
+        $('.convert_page').show();
+        $(this).siblings('a').removeClass('active');
+        $(this).addClass('active');
     })
 
     // List action
     listButton.off().on('click', function(event) {
         event.preventDefault();
-        populateListPage();
+        populateListPage($(this));
     })
 
     // Select action
@@ -51,7 +53,6 @@ $(document).ready(function() {
 
     // Populate Convert page
     $('.convert_page').show();
-    $('.list_page').hide();
 
     $('.list1, .list2').empty();
 
@@ -85,7 +86,7 @@ $(document).ready(function() {
             $(field).siblings().filter('input').val('');
             let str = $('<p></p>').addClass('string');
             if (isNaN(val) == true) {
-                str.text('Numbers only!')
+                str.text('Valid numbers only!')
             } else {
                 str.text('Result here');
             }
@@ -195,10 +196,15 @@ $(document).ready(function() {
 
 
     // Populate List page
-    function populateListPage() {
+    function populateListPage(button) {
 
         $('.convert_page').hide();
         $('.list_page').show();
+
+        // Highlight the nav button
+        button.siblings('a').removeClass('active');
+        button.addClass('active');
+
         $('.search').focus();
 
         // Use cached data if possible

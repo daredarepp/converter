@@ -9,14 +9,14 @@ body {
 .nav {
     display: inline-block;
     width: 100%;
-    background-color: #0277BD;
+    background-color: #0782c8;
     margin: 0px;
 }
 
 .nav a {
     display: inline-block;
     float: left;
-    padding: 15px;
+    padding: 15px 0px;
     font-size: 18px;
     width: 80px;
     text-align: center;
@@ -27,8 +27,13 @@ body {
     color: white;
 }
 
-.nav a:hover {
-    background-color: rgb(11, 98, 148);
+.nav a:hover, .nav a.active {
+    background-color: rgba(0, 0, 0, 0.16);
+}
+
+.nav a .icon {
+    display: block;
+    font-size: 24px;
 }
 
 /* timestamp */
@@ -44,17 +49,20 @@ body {
     padding: 25px 50px;
 }
 
+.list_page {
+    display: none;
+}
+
 /* Convert page */
 h1 {
     text-align: center;
-    font-size: 23px;
+    font-size: 25px;
     font-weight: normal;
-    letter-spacing: 1px;
     position: absolute;
-    top: 0px;
+    top: 23px;
     left: 850px;
     padding: 0px;
-    margin: 10px 0px;
+    margin: 0px;
     color: white;
 }
 
@@ -66,8 +74,9 @@ h1 {
     margin: 0px;
     padding: 7px 0px;
     font-size: 22px;
-    background-color: rgba(128, 128, 128, 0.363);
+    background-color: rgba(0, 0, 0, 0.115);
     width: 100%;
+    border-radius: 2px 2px 0px 0px;
 }
 
 .convert_page .icon {
@@ -85,7 +94,8 @@ h1 {
     padding: 100px 0px 60px;
     margin: 50px auto;
     background-color: white;
-    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(0, 0, 0, 0.180);
+    border-radius: 3px;
 }
 
 .calculate {
@@ -118,12 +128,12 @@ h1 {
 .swap:link, .swap:visited {
     text-decoration: none;
     font-weight: bold;
-    background-color: rgba(128, 128, 128, 0.212);
-    color: rgb(7, 98, 150);
+    background-color: rgba(0, 0, 0, 0.115);
+    color: rgba(0, 0, 0, 0.692);
 }
 
 .swap:active {
-    background-color: rgba(128, 128, 128, 0.356);
+    background-color: rgba(0, 0, 0, 0.180);
 }
 
 .string {
@@ -134,7 +144,6 @@ h1 {
 }
 
 /* List page*/
-
 .search {
     font-size: 22px;
     text-align: center;
@@ -158,9 +167,9 @@ h1 {
     width: 200px;
     background-color: white;
     float: left;
-    border: 1px solid silver;
+    border: 1px solid rgba(0, 0, 0, 0.180);
+    border-radius: 3px;
     margin: 15px;
-    position: relative;
 }
 
 .currency, .rate {
@@ -170,7 +179,7 @@ h1 {
     padding: 10px;
 }
 .currency {
-    background-color: rgba(128, 128, 128, 0.363);
+    background-color: rgba(0, 0, 0, 0.115);
     margin: 0px;
 }
 
@@ -194,7 +203,7 @@ h1 {
 .spinner > div {
     width: 18px;
     height: 18px;
-    background-color: #0277BD;
+    background-color: #0782c8;
     border-radius: 100%;
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
