@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Converter</title>
+    <meta charset = "UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel='stylesheet' href='style.css' />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href='https://fonts.googleapis.com/css?family=Antic' rel='stylesheet'>
+    <script src="jquery-3.2.1.js"></script>
+    <script src="my_jquery.js"></script>
+  </head>
+  <body>
+    <h1>Currency Converter</h1>
+
+    <!-- Navigation -->
+    <div class="nav">
+      <a href = "#" class = "convert">Convert</a>
+      <a href = "#" class = "list">List</a>
+    </div>
+
+    <!-- Convert page -->
+    <div class = "convert_page">
+
+      <div class = "select">
+        <h2>Choose your currencies</h2>
+        <i class="material-icons icon">euro_symbol</i>
+        <select class = "list1"></select>
+        <a href = "#" class = "swap" title="Swap currencies">&#8646;</a>
+        <select class = "list2"></select>
+      </div>
+      
+      
+      <div class="calculate">
+        <h2>Convert from both sides</h2>
+        <i class="material-icons icon">transform</i>
+        <input type = "text" class="input1" placeholder="Amount"></input>
+        <input type = "text" class="input2" placeholder="Amount"></input>
+        <p class="string">Result here</p>
+      </div>
+
+    </div>
+    
+    <!-- List page -->
+    <div class = "list_page">
+        <h2>Rates</h2>
+        <input type="text" placeholder="Search" class="search"></input>
+        <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+    </div>
+
+  </body>
+</html>
