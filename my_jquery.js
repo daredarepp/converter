@@ -78,12 +78,17 @@ $(document).ready(function() {
         $('.string').remove()
 
         var val = field.val();
-
-        // If the field is empty, empty the other one too
-        if (val.length < 1) { 
+        
+        // If the field is empty or isn't a number, empty the other one too
+        if (val.length < 1 || isNaN(val)) { 
             
             $(field).siblings().filter('input').val('');
-            let str = $('<p></p>').addClass('string').text('Result here');
+            let str = $('<p></p>').addClass('string');
+            if (isNaN(val) == true) {
+                str.text('Numbers only!')
+            } else {
+                str.text('Result here');
+            }
             $('.calculate').append(str)
             return
         };
