@@ -20,6 +20,11 @@ $(document).ready(function() {
         populateListPage();
     })
 
+    // Select action
+    $('select').off().on('change', function() {
+        calculate($('.input1'));
+    })
+
     // Swap action
     $('.swap').off().on('click', function(event) {
         event.preventDefault();
@@ -72,8 +77,10 @@ $(document).ready(function() {
         // Remove previous result
         $('.string').remove()
 
+        var val = field.val();
+
         // If the field is empty, empty the other one too
-        if (field.val().length < 1) { 
+        if (val.length < 1) { 
             
             $(field).siblings().filter('input').val('');
             let str = $('<p></p>').addClass('string').text('Result here');
@@ -91,7 +98,7 @@ $(document).ready(function() {
 
             var from = $('.list1').val(),
                 to = $('.list2').val(),
-                value = Number(field.val()),
+                value = Number(val),
                 fromRate = 0,
                 toRate = 0;
 
@@ -99,7 +106,7 @@ $(document).ready(function() {
 
             var from = $('.list2').val(),
                 to = $('.list1').val(),
-                value = Number(field.val()),
+                value = Number(val),
                 fromRate = 0,
                 toRate = 0;
 
@@ -109,6 +116,9 @@ $(document).ready(function() {
         var lastTimestamp = Number($('.timestamp').attr('data-utc'));
         if (($('.timestamp').length < 1) || (lastTimestamp + 3600000 < Date.now())) {
             
+            // Show the spinner
+            $('.spinner.one').show();
+
             var appId = '367769e2d8204e40a9e3ddc894a88205';
             var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
             
@@ -141,15 +151,23 @@ $(document).ready(function() {
                 fromRate = Number(rates[from])
                 toRate = Number(rates[to]);
                 var endResult = value / fromRate * toRate;
-                endResult = endResult.toFixed(2)
+                endResult = +endResult.toFixed(4)
                 $(field).siblings().filter('input').val(endResult);
                 var str =  $('<p></p>').addClass('string')
                 str.text(value + ' ' + from + ' = ' + endResult + ' ' + to);
+                
+                $('.string').remove();
                 $('.calculate').append(str);
+                
+                // Hide spinner
+                $('.spinner.one').hide();
                 
             })
             .fail (function(err) {
+
+                $('.spinner.one').hide();
                 console.log(err)
+
             })
         
         } else {
@@ -157,11 +175,14 @@ $(document).ready(function() {
             fromRate = Number(rates[from])
             toRate = Number(rates[to]);
             endResult = value / fromRate * toRate;
-            endResult = endResult.toFixed(2)
+            endResult = +endResult.toFixed(4)
             $(field).siblings().filter('input').val(endResult);
             var str =  $('<p></p>').addClass('string')
             str.text(value + ' ' + from + ' = ' + endResult + ' ' + to);
+            
+            $('.string').remove();
             $('.calculate').append(str);
+            $('.spinner.one').hide();
 
         }
 
@@ -182,7 +203,7 @@ $(document).ready(function() {
 
             // Remove old rates and start the spinner
             $('.rates').remove();
-            $('.spinner').show();
+            $('.spinner.two').show();
 
             var appId = '367769e2d8204e40a9e3ddc894a88205'
             var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`
@@ -222,20 +243,21 @@ $(document).ready(function() {
                     let currencyField = $('<div></span>').addClass('currency');
                     currencyField.text(rate)
                     let rateField = $('<div></div>').addClass('rate');
-                    rateField.text(rates[rate].toFixed(2))
+                    rateField.text(+rates[rate].toFixed(4))
                     p.append(currencyField).append(rateField)
                     div.append(p);
                 }
                 
                 // Hide the spinner and add the rates
-                $('.spinner').hide();
+                $('.spinner.two').hide();
                 $('.list_page').append(div);
                 
             })
             .fail (function(err) {
 
-                $('.spinner').hide()
+                $('.spinner.two').hide()
                 console.log(err)
+
             })
 
         }
@@ -244,7 +266,7 @@ $(document).ready(function() {
 
     // Swap
     function swap() {
-        
+
         var list1 = $('.list1');
         var list2 = $('.list2');
 

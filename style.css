@@ -82,10 +82,14 @@ h1 {
     position: relative;
     text-align: center;
     width: 1500px;
-    padding: 100px 0px;
+    padding: 100px 0px 60px;
     margin: 50px auto;
     background-color: white;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.37);
+}
+
+.calculate {
+    padding: 100px 0px 100px;
 }
 
 .input1, .input2, .list1, .list2 {
@@ -104,15 +108,27 @@ h1 {
     margin: 0px 100px;
 }
 
+.swap {
+    display: inline-block;
+    font-size: 24px;
+    padding: 0px 6px 2px;
+    border-radius: 25px;
+}
+
 .swap:link, .swap:visited {
     text-decoration: none;
-    color: #0277BD;
-    font-size: 24px;
+    font-weight: bold;
+    background-color: rgba(128, 128, 128, 0.212);
+    color: rgb(7, 98, 150);
+}
+
+.swap:active {
+    background-color: rgba(128, 128, 128, 0.356);
 }
 
 .string {
     position: absolute;
-    bottom: 20px;
+    bottom: 10px;
     width: 100%;
     font-size: 18px;
 }
@@ -132,9 +148,10 @@ h1 {
 }
 
 .rates {
+    box-sizing: border-box;
     display: inline-block;
     width: 100%;
-    padding: 0px 55px;
+    padding: 0px 80px;
 }
 
 .currency_rates {
@@ -192,6 +209,31 @@ h1 {
 .spinner .bounce2 {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
+}
+
+.spinner.one {
+    position: absolute;
+    left: 720px;
+    top: 105px;
+    width: 50px;
+    margin: 0px;
+}
+
+.spinner.one > div {
+    width: 10px;
+    height: 10px;
+    animation-duration: 0.6s;
+
+}
+
+.spinner.one .bounce1 {
+    -webkit-animation-delay: -0.25s;
+    animation-delay: -0.25s;
+}
+
+.spinner.one .bounce2 {
+    -webkit-animation-delay: -0.15s;
+    animation-delay: -0.15s;
 }
 
 @-webkit-keyframes sk-bouncedelay {
