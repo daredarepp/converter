@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width">
     <link rel='stylesheet' href='style.css' />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="icon" href="favicon.ico">
     <link href='https://fonts.googleapis.com/css?family=Antic' rel='stylesheet'>
     <script src="jquery-3.2.1.js"></script>
     <script src="my_jquery.js"></script>
@@ -15,6 +16,11 @@
 
     <!-- Navigation -->
     <div class="nav">
+      <a href = "#" class = "home active">
+        <i class="material-icons icon">
+          home
+        </i>
+      </a>
 
       <a href = "#" class = "convert">
         <i class="material-icons icon">
@@ -29,6 +35,37 @@
         </i>
         List
       </a>
+    </div>
+
+    <!-- Homepage -->
+    <div class="homepage">
+
+      <!-- Convert link -->
+      <a href="#" class="convert link">
+        <span class="material-icons icon">
+          transform
+        </span>
+        <h2>
+          Converter
+        </h2>
+        <p class="description">
+          Currency converter helps you easily convert any currency you want. Instantly.
+        </p>
+      </a>
+
+      <!-- List link -->
+      <a href="#" class="list link">
+        <span class="material-icons icon">
+          view_module
+        </span>
+        <h2>
+          List
+        </h2>
+        <p class="description">
+          List of all the current rates for all the currencies in the world. Updated hourly.
+        </p>
+      </a>
+      
     </div>
 
     <!-- Convert page -->
@@ -54,7 +91,7 @@
           <div class="bounce3"></div>
         </div>
         <input type = "text" class="input2" placeholder="Amount"></input>
-        <p class="string">Result here</p>
+        <p class="stringConvert">Result here.</p>
       </div>
 
     </div>

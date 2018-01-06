@@ -1,5 +1,6 @@
 $(document).ready(function() {
     
+    var homeButton = $('.home');
     var convertButton = $('.convert');
     var listButton = $('.list');
     var input1 = $('.input1');
@@ -7,19 +8,22 @@ $(document).ready(function() {
     var rates = 0;
     var timestamp = '';
 
+    // Home action
+    homeButton.off().on('click', function(event) {
+        event.preventDefault();
+        populateHomepage();
+    })
+
     // Convert action
     convertButton.off().on('click', function(event) {
         event.preventDefault();
-        $('.list_page').hide();
-        $('.convert_page').show();
-        $(this).siblings('a').removeClass('active');
-        $(this).addClass('active');
+        populateConvertPage();
     })
 
     // List action
     listButton.off().on('click', function(event) {
         event.preventDefault();
-        populateListPage($(this));
+        populateListPage();
     })
 
     // Select action
@@ -50,46 +54,91 @@ $(document).ready(function() {
         search($(this));
     })
 
+    // Populate Homepage
+    function populateHomepage() {
+
+        $('.convert_page, .list_page').hide();
+        $('.homepage').show();
+
+        // Highlight the nav button
+        $('.nav').children('a').removeClass('active');
+        $('.nav').children('.home').addClass('active');
+
+    }
+
 
     // Populate Convert page
-    $('.convert_page').show();
+    function populateConvertPage() {
+        
+        $('.homepage, .list_page').hide();
+        $('.convert_page').show();
 
-    $('.list1, .list2').empty();
+        // Highlight the nav button
+        $('.nav').children('a').removeClass('active');
+        $('.nav').children('.convert').addClass('active');
 
-    $.ajax({
-        url: 'https://openexchangerates.org/api/currencies.json',
-        method: 'GET'
-    })
-    .done(function(currencies) {
+        $('.stringSelect').remove();
 
-        for(currency in currencies) {
-            let option = $('<option></option>');
-            option.text(currencies[currency]);
-            option.attr('value',currency);
+        // If the lists are empty, try to get new currencies
+        if ($('.list1').find('option').length < 1) {
             
-            $('.list1, .list2').append(option);
+            $.ajax({
+                url: 'https://openexchangerates.org/api/currencies.json',
+                method: 'GET'
+            })
+            .done(function(currencies) {
+
+                for(currency in currencies) {
+                    let option = $('<option></option>');
+                    option.text(currencies[currency]);
+                    option.attr('value',currency);
+                    
+                    $('.list1, .list2').append(option);
+                }
+
+                // Convert eur to mkd
+                var eur = $('.list1').find($('option')).filter('[value="EUR"]');
+                var mkd = $('.list2').find($('option')).filter('[value="MKD"]');
+                eur.attr('selected','');
+                mkd.attr('selected','');
+                input1.val(1);
+                calculate(input1);
+
+            })
+            .fail(function(err) {
+                
+                var str = $('<p></p>');
+                str.addClass('stringSelect');
+                str.text('Can\'t get access to the currencies');
+                $('.list1').before(str);
+
+            })
         }
 
-    })
+    }
 
     // Calculate
     function calculate(field) {
 
         // Remove previous result
-        $('.string').remove()
+        $('.stringConvert').remove()
 
         var val = field.val();
         
-        // If the field is empty or isn't a number, empty the other one too
-        if (val.length < 1 || isNaN(val)) { 
+        // If the field is empty, or it isn't a number, or there was problem getting currencies
+        if (val.length < 1 || isNaN(val) || $('.stringSelect').length > 0) { 
             
             $(field).siblings().filter('input').val('');
-            let str = $('<p></p>').addClass('string');
+            let str = $('<p></p>').addClass('stringConvert');
+
             if (isNaN(val) == true) {
                 str.text('Valid numbers only!')
+            } else if ($('.stringSelect').length > 0) {
+                str.text('Can\'t get access to the currencies');
             } else {
-                str.text('Result here');
+                str.text('Result here.');
             }
+
             $('.calculate').append(str)
             return
         };
@@ -120,7 +169,7 @@ $(document).ready(function() {
         
         // Use cached data if possible
         var lastTimestamp = Number($('.timestamp').attr('data-utc'));
-        if (($('.timestamp').length < 1) || (lastTimestamp + 3600000 < Date.now())) {
+        if (($('.timestamp').length < 1) || (lastTimestamp + 3900000 < Date.now())) {
             
             // Show the spinner
             $('.spinner.one').show();
@@ -159,10 +208,10 @@ $(document).ready(function() {
                 var endResult = value / fromRate * toRate;
                 endResult = +endResult.toFixed(4)
                 $(field).siblings().filter('input').val(endResult);
-                var str =  $('<p></p>').addClass('string')
+                var str =  $('<p></p>').addClass('stringConvert')
                 str.text(value + ' ' + from + ' = ' + endResult + ' ' + to);
                 
-                $('.string').remove();
+                $('.stringConvert').remove();
                 $('.calculate').append(str);
                 
                 // Hide spinner
@@ -183,10 +232,10 @@ $(document).ready(function() {
             endResult = value / fromRate * toRate;
             endResult = +endResult.toFixed(4)
             $(field).siblings().filter('input').val(endResult);
-            var str =  $('<p></p>').addClass('string')
+            var str =  $('<p></p>').addClass('stringConvert')
             str.text(value + ' ' + from + ' = ' + endResult + ' ' + to);
             
-            $('.string').remove();
+            $('.stringConvert').remove();
             $('.calculate').append(str);
             $('.spinner.one').hide();
 
@@ -196,21 +245,22 @@ $(document).ready(function() {
 
 
     // Populate List page
-    function populateListPage(button) {
+    function populateListPage() {
 
-        $('.convert_page').hide();
+        $('.homepage, .convert_page').hide();
         $('.list_page').show();
 
         // Highlight the nav button
-        button.siblings('a').removeClass('active');
-        button.addClass('active');
+        $('.nav').children('a').removeClass('active');
+        $('.nav').children('.list').addClass('active');
 
+        $('.stringList').remove();
         $('.search').focus();
 
         // Use cached data if possible
         var lastTimestamp = Number($('.timestamp').attr('data-utc'));
 
-        if (($('.timestamp').length < 1) || (lastTimestamp + 3600000 < Date.now()) || ($('.currency_rates').length < 1)){
+        if (($('.timestamp').length < 1) || (lastTimestamp + 3900000 < Date.now()) || ($('.currency_rates').length < 1)){
 
             // Remove old rates and start the spinner
             $('.rates').remove();
@@ -297,8 +347,10 @@ $(document).ready(function() {
         var val = searchField.val().toUpperCase();
         var currencyRates = $('.currency_rates');
 
-        $('.string2').remove()
+        // Remove previous string
+        $('.stringList').remove()
 
+        // Show or hide currency items
         currencyRates.each(function(i, currencyRate) {
             let currency = $(currencyRate).children('.currency');
             if (currency.text().indexOf(val) > -1) {
@@ -308,8 +360,9 @@ $(document).ready(function() {
             }
         })
 
+        // Add string
         if($('.currency_rates[style="display: none;"]').length == currencyRates.length) {
-            let str = $('<p></p>').addClass('string2').text('No match')
+            let str = $('<p></p>').addClass('stringList').text('No match')
             $('.list_page').append(str);
         }
 
