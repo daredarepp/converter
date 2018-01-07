@@ -1,10 +1,14 @@
+html {
+    overflow-y: scroll;
+}
 
 body {
     margin: 0px;
     padding: 0px;
-    height: 100%;
     font-family: 'Antic';
+    width: 1903px;
 }
+
 /* Navigation */
 .nav {
     display: inline-block;
@@ -28,8 +32,13 @@ body {
     color: white;
 }
 
-.nav a:hover, .nav a.active {
+.nav a:hover {
     background-color: rgba(0, 0, 0, 0.16);
+}
+
+.nav a.active {
+    background-color: white;
+    color: grey;
 }
 
 .nav a .icon {
@@ -51,12 +60,12 @@ body {
 
 /*Main title  */
 h1 {
-    text-align: center;
-    font-size: 25px;
-    font-weight: normal;
     position: absolute;
     top: 23px;
     left: 850px;
+    font-size: 25px;
+    text-align: center;
+    font-weight: normal;
     padding: 0px;
     margin: 0px;
     color: white;
@@ -89,18 +98,13 @@ h1 {
 }
 
 .link:hover {
-    box-shadow: 0px 0px 0px 0.5px rgba(0, 0, 0, 0.115);
+    border-color: rgba(0, 0, 0, 0.400);
 }
 
 .link .icon {
     font-size: 80px;
     color: #0782c8;
 }
-
-.list.link .icon {
-    /* color: rgb(18, 95, 18); */
-}
-
 
 /* Convert page */
 .convert_page h2 {
@@ -118,9 +122,9 @@ h1 {
 
 .convert_page .icon {
     position: absolute;
-    left: 10px;
+    left: 8px;
     top: 10px;
-    color: rgba(0, 0, 0, 0.623);
+    color: black;
     font-size: 22px;
 }
 
@@ -262,7 +266,7 @@ h1 {
     animation-delay: -0.16s;
 }
 
-.spinner.one {
+.spinner.one, .spinner.zero {
     position: absolute;
     left: 720px;
     top: 105px;
@@ -270,19 +274,23 @@ h1 {
     margin: 0px;
 }
 
-.spinner.one > div {
+.spinner.zero {
+    top: 50px;
+}
+
+.spinner.one > div, .spinner.zero > div {
     width: 10px;
     height: 10px;
     animation-duration: 0.6s;
 
 }
 
-.spinner.one .bounce1 {
+.spinner.one .bounce1, .spinner.zero .bounce1 {
     -webkit-animation-delay: -0.25s;
     animation-delay: -0.25s;
 }
 
-.spinner.one .bounce2 {
+.spinner.one .bounce2, .spinner.zero .bounce2 {
     -webkit-animation-delay: -0.15s;
     animation-delay: -0.15s;
 }

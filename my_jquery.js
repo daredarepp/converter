@@ -66,7 +66,6 @@ $(document).ready(function() {
 
     }
 
-
     // Populate Convert page
     function populateConvertPage() {
         
@@ -82,9 +81,13 @@ $(document).ready(function() {
         // If the lists are empty, try to get new currencies
         if ($('.list1').find('option').length < 1) {
             
+            // Show the spinner
+            $('.spinner.zero').show();
+
             $.ajax({
                 url: 'https://openexchangerates.org/api/currencies.json',
-                method: 'GET'
+                method: 'GET',
+                timeout: 4000
             })
             .done(function(currencies) {
 
@@ -95,6 +98,9 @@ $(document).ready(function() {
                     
                     $('.list1, .list2').append(option);
                 }
+
+                // Hide the spinner
+                $('.spinner.zero').hide();
 
                 // Convert eur to mkd
                 var eur = $('.list1').find($('option')).filter('[value="EUR"]');
@@ -107,9 +113,12 @@ $(document).ready(function() {
             })
             .fail(function(err) {
                 
+                // Hide the spinner
+                $('.spinner.zero').hide();
+
                 var str = $('<p></p>');
                 str.addClass('stringSelect');
-                str.text('Can\'t get access to the currencies');
+                str.text('Can\'t get access to currencies');
                 $('.list1').before(str);
 
             })
@@ -134,7 +143,7 @@ $(document).ready(function() {
             if (isNaN(val) == true) {
                 str.text('Valid numbers only!')
             } else if ($('.stringSelect').length > 0) {
-                str.text('Can\'t get access to the currencies');
+                str.text('Can\'t get access to currencies');
             } else {
                 str.text('Result here.');
             }
@@ -180,7 +189,8 @@ $(document).ready(function() {
             $.ajax({
                 url: myurl,
                 method: 'GET',
-                dataType: 'json'
+                dataType: 'json',
+                timeout: 4000
             })
             .done(function (returnValue) {
 
@@ -188,7 +198,7 @@ $(document).ready(function() {
                 var d = new Date(0);
                 d.setUTCMilliseconds(Number(returnValue.timestamp) * 1000);
 
-                // Create new or update old
+                // Create new timestamp or update the old one
                 if ($('.timestamp').length < 1) {
                     let timestamp = $('<span></span>')
                     timestamp.addClass('timestamp');
@@ -208,10 +218,12 @@ $(document).ready(function() {
                 var endResult = value / fromRate * toRate;
                 endResult = +endResult.toFixed(4)
                 $(field).siblings().filter('input').val(endResult);
-                var str =  $('<p></p>').addClass('stringConvert')
+                var str =  $('<p></p>').addClass('stringConvert');
                 str.text(value + ' ' + from + ' = ' + endResult + ' ' + to);
                 
+                // In case there was a late previous string displayed
                 $('.stringConvert').remove();
+
                 $('.calculate').append(str);
                 
                 // Hide spinner
@@ -221,7 +233,9 @@ $(document).ready(function() {
             .fail (function(err) {
 
                 $('.spinner.one').hide();
-                console.log(err)
+                var str =  $('<p></p>').addClass('stringConvert');
+                str.text('Can\'t get access to rates');
+                $('.calculate').append(str);
 
             })
         
@@ -260,8 +274,8 @@ $(document).ready(function() {
         // Use cached data if possible
         var lastTimestamp = Number($('.timestamp').attr('data-utc'));
 
-        if (($('.timestamp').length < 1) || (lastTimestamp + 3900000 < Date.now()) || ($('.currency_rates').length < 1)){
-
+        if (($('.timestamp').length < 1) || (lastTimestamp + 3900000 < Date.now())){
+            
             // Remove old rates and start the spinner
             $('.rates').remove();
             $('.spinner.two').show();
@@ -272,7 +286,8 @@ $(document).ready(function() {
             $.ajax({
                 url: myurl,
                 method: 'GET',
-                dataType: 'json'
+                dataType: 'json',
+                timeout: 4000
             })
             .done(function (returnValue) {
 
@@ -280,7 +295,7 @@ $(document).ready(function() {
                 var d = new Date(0);
                 d.setUTCMilliseconds(Number(returnValue.timestamp) * 1000);
 
-                // Create new or update old
+                // Create new timestamp or update the old one
                 if ($('.timestamp').length < 1) {
                     let timestamp = $('<span></span>')
                     timestamp.addClass('timestamp');
@@ -295,7 +310,7 @@ $(document).ready(function() {
                 var div = $('<div></div>');
                 div.addClass('rates');
 
-                // Currencies and rates
+                // Create new rate items with new data
                 rates = returnValue.rates
                 for (rate in rates) {
                     
@@ -310,16 +325,41 @@ $(document).ready(function() {
                 }
                 
                 // Hide the spinner and add the rates
+                $('.search').val('');
                 $('.spinner.two').hide();
                 $('.list_page').append(div);
                 
             })
             .fail (function(err) {
 
-                $('.spinner.two').hide()
-                console.log(err)
+                $('.spinner.two').hide();
+                var str = $('<p></p>').addClass('stringList');
+                str.text('Can\'t get access to rates');
+                $('.list_page').append(str);
 
             })
+
+        // Create new rate items with cached data
+        } else if ($('.currency_rates').length < 1) {
+            
+            var div = $('<div></div>');
+            div.addClass('rates');
+
+            for (rate in rates) {
+                    
+                let p = $('<p></p>');
+                p.addClass('currency_rates');
+                let currencyField = $('<div></span>').addClass('currency');
+                currencyField.text(rate)
+                let rateField = $('<div></div>').addClass('rate');
+                rateField.text(+rates[rate].toFixed(4))
+                p.append(currencyField).append(rateField)
+                div.append(p);
+            }
+
+            $('.search').val('');
+            $('.spinner.two').hide();
+            $('.list_page').append(div);
 
         }
 
