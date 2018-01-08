@@ -6,7 +6,11 @@ body {
     margin: 0px;
     padding: 0px;
     font-family: 'Antic';
-    width: 1903px;
+    width: 100%;
+}
+
+a {
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
 }
 
 /* Navigation */
@@ -60,9 +64,10 @@ body {
 
 /*Main title  */
 h1 {
-    position: absolute;
-    top: 23px;
-    left: 850px;
+    position: relative;
+    display: inline-block;
+    bottom: 55px;
+    left: 45%;
     font-size: 25px;
     text-align: center;
     font-weight: normal;
@@ -74,7 +79,7 @@ h1 {
 /* Pages */
 .homepage, .convert_page, .list_page {
     text-align: center;
-    padding: 25px 50px;
+    padding: 0px 25px 50px;
 }
 
 .convert_page, .list_page {
@@ -131,9 +136,9 @@ h1 {
 .select, .calculate {
     position: relative;
     text-align: center;
-    width: 1500px;
+    width: 80%;
     padding: 100px 0px 60px;
-    margin: 50px auto;
+    margin: 30px auto;
     background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.180);
     border-radius: 3px;
@@ -156,6 +161,11 @@ h1 {
     text-align: center;
     padding-right: 15px;
     margin: 0px 100px;
+    width: 20%;
+}
+
+.list1, .list2 {
+    width: 25%;
 }
 
 .swap {
@@ -169,11 +179,15 @@ h1 {
     text-decoration: none;
     font-weight: bold;
     background-color: rgba(0, 0, 0, 0.115);
-    color: rgba(0, 0, 0, 0.692);
+    color: #0782c8;
+}
+
+.swap:hover {
+    color: black;
 }
 
 .swap:active {
-    background-color: rgba(0, 0, 0, 0.180);
+    background-color: rgba(0, 0, 0, 0.250);
 }
 
 .stringSelect {
@@ -205,7 +219,11 @@ h1 {
 
 .rates {
     box-sizing: border-box;
-    display: inline-block;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, 1fr);
+    grid-gap: 15px;
+    justify-items: center;
     width: 100%;
     padding: 0px 80px;
 }
@@ -213,10 +231,8 @@ h1 {
 .currency_rates {
     width: 200px;
     background-color: white;
-    float: left;
     border: 1px solid rgba(0, 0, 0, 0.180);
     border-radius: 3px;
-    margin: 15px;
 }
 
 .currency, .rate {
@@ -238,7 +254,7 @@ h1 {
     font-size: 18px;
 }
 
-/* Spinner animation */
+/* Spinners */
 .spinner {
     display: none;
     margin: 100px auto 0;
@@ -308,4 +324,32 @@ h1 {
         -webkit-transform: scale(1.0);
         transform: scale(1.0);
     }
+}
+
+/* Scroll to top button */
+#toTop {
+    display: none;
+    position: fixed;
+    margin: 0px;
+    bottom: 25px;
+    right: 25px;
+    padding: 7px;
+    border-radius: 3px;
+    font-weight: bold;
+    border: none;
+    outline: none;
+}
+
+#toTop:link, #toTop:visited {
+    text-decoration: none;
+    background-color: rgba(0, 0, 0, 0.115);
+    color: #0782c8;
+}
+
+#toTop:hover {
+    color: black;
+}
+
+#toTop:active {
+    background-color: rgba(0, 0, 0, 0.250);
 }

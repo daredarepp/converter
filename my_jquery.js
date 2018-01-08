@@ -54,6 +54,17 @@ $(document).ready(function() {
         search($(this));
     })
 
+    // Scroll action
+    $(window).off().on('scroll', function() {
+        showScrollButton()
+    })
+
+    // Scroll button action
+    $('#toTop').off().on('click', function(event) {
+        event.preventDefault();
+        scrollToTop($(this));
+    })
+
     // Populate Homepage
     function populateHomepage() {
 
@@ -382,6 +393,7 @@ $(document).ready(function() {
 
     }
 
+    // Search
     function search(searchField) {
 
         var val = searchField.val().toUpperCase();
@@ -405,6 +417,26 @@ $(document).ready(function() {
             let str = $('<p></p>').addClass('stringList').text('No match')
             $('.list_page').append(str);
         }
+
+    }
+
+    // Show scroll button
+    function showScrollButton() {
+        // console.log($(window).scrollTop())
+        var scrollButton = $('#toTop');
+        
+        if ($(window).scrollTop() < 100) {
+            scrollButton.fadeOut(200);
+        } else {
+            scrollButton.fadeIn(200);
+        }
+
+    }
+
+    // Scroll to top
+    function scrollToTop(scrollButton) {
+
+        $('html').animate({scrollTop: '0'}, 500);
 
     }
 
