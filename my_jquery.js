@@ -8,22 +8,31 @@ $(document).ready(function() {
     var rates = 0;
     var timestamp = '';
 
+    // Toggle navbar action
+    $('#toggle').off().on('click', function(event) {
+        event.preventDefault();
+        toggleNavbar();
+    })
+
     // Home action
     homeButton.off().on('click', function(event) {
         event.preventDefault();
         populateHomepage();
+        $('.nav').removeClass('responsive');
     })
 
     // Convert action
     convertButton.off().on('click', function(event) {
         event.preventDefault();
         populateConvertPage();
+        $('.nav').removeClass('responsive');
     })
 
     // List action
     listButton.off().on('click', function(event) {
         event.preventDefault();
         populateListPage();
+        $('.nav').removeClass('responsive');
     })
 
     // Select action
@@ -38,13 +47,13 @@ $(document).ready(function() {
     })
 
     // Input 1 action
-    input1.off().off().on('keyup', function() {
+    input1.off().on('keyup', function() {
         var field = $(this);
         calculate(field);
     })
 
     // Input 2 action
-    input2.off().off().on('keyup', function() {
+    input2.off().on('keyup', function() {
         var field = $(this);
         calculate(field);
     })
@@ -64,6 +73,14 @@ $(document).ready(function() {
         event.preventDefault();
         scrollToTop($(this));
     })
+
+    // Toggle navbar
+    function toggleNavbar() {
+
+        var navbar = $('.nav');
+        navbar.toggleClass('responsive');
+
+    }
 
     // Populate Homepage
     function populateHomepage() {
@@ -194,7 +211,7 @@ $(document).ready(function() {
             // Show the spinner
             $('.spinner.one').show();
 
-            var appId = '367769e2d8204e40a9e3ddc894a88205';
+            var appId = '639ecf153c634cfab7dab275a5b6921e';
             var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
             
             $.ajax({
@@ -215,7 +232,7 @@ $(document).ready(function() {
                     timestamp.addClass('timestamp');
                     timestamp.attr('data-utc', Number(returnValue.timestamp) * 1000)
                     timestamp.text('Updated: ' + d.toLocaleTimeString());
-                    $('.nav').append(timestamp);
+                    $('body').prepend(timestamp);
                 } else {
                     $('.timestamp').attr('data-utc', Number(returnValue.timestamp) * 1000);
                     $('.timestamp').text('Updated: ' + d.toLocaleTimeString())
@@ -291,7 +308,7 @@ $(document).ready(function() {
             $('.rates').remove();
             $('.spinner.two').show();
 
-            var appId = '367769e2d8204e40a9e3ddc894a88205'
+            var appId = '639ecf153c634cfab7dab275a5b6921e'
             var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`
 
             $.ajax({
@@ -312,7 +329,7 @@ $(document).ready(function() {
                     timestamp.addClass('timestamp');
                     timestamp.attr('data-utc', Number(returnValue.timestamp) * 1000)
                     timestamp.text('Updated: ' + d.toLocaleTimeString());
-                    $('.nav').append(timestamp);
+                    $('body').prepend(timestamp);
                 } else {
                     $('.timestamp').attr('data-utc', Number(returnValue.timestamp) * 1000);
                     $('.timestamp').text('Updated: ' + d.toLocaleTimeString())
@@ -382,6 +399,11 @@ $(document).ready(function() {
         var list1 = $('.list1');
         var list2 = $('.list2');
 
+        // If the lists are empty
+        if (list1.children('option').length < 1) {
+            return
+        }
+
         // Swap the lists
         $('.select').prepend(list2);
         list2.attr('class', 'list1');
@@ -422,7 +444,7 @@ $(document).ready(function() {
 
     // Show scroll button
     function showScrollButton() {
-        // console.log($(window).scrollTop())
+        
         var scrollButton = $('#toTop');
         
         if ($(window).scrollTop() < 100) {

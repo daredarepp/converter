@@ -1,10 +1,14 @@
+* {
+    box-sizing: border-box;
+}
+
 html {
     overflow-y: scroll;
 }
 
 body {
     margin: 0px;
-    padding: 0px;
+    padding: 76px 0px 0px;
     font-family: 'Antic';
     width: 100%;
 }
@@ -16,19 +20,22 @@ a {
 /* Navigation */
 .nav {
     display: inline-block;
+    position: absolute;
+    top: 0;
     width: 100%;
-    background-color: #0782c8;
     margin: 0px;
+    background-color: #0782c8;
+    z-index: 1;
 }
 
 .nav a {
-    box-sizing: border-box;
     display: inline-block;
     float: left;
-    padding: 15px 0px;
-    font-size: 18px;
     width: 80px;
+    font-size: 18px;
+    padding: 15px 0px;
     text-align: center;
+    transition: none;
 }
 
 .nav a:link, .nav a:visited {
@@ -55,31 +62,76 @@ a {
     padding: 6px 0px;
 }
 
+#toggle {
+    display: none;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 60px;
+    font-size: 24px;
+    padding: 10px 0px;
+}
+
+@media (max-width: 1000px) {
+
+    .nav a:not(:first-child) {
+        display: none;
+    }
+
+    #toggle {
+        display: inline-block;
+    }
+
+    .nav.responsive a {
+        display: block;
+        width: 100%;
+    }
+
+    .nav.responsive a.active {
+        background-color: transparent;
+        color: silver;
+    }
+
+}
+
 /* timestamp */
 .timestamp {
-    float: right;
-    padding: 15px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
     color: white;
+    z-index: 2;
+}
+
+@media (max-width: 1000px) {
+    .timestamp {
+        top: 80px;
+        color: grey;
+        z-index: 0;
+    }
 }
 
 /*Main title  */
 h1 {
-    position: relative;
-    display: inline-block;
-    bottom: 55px;
-    left: 45%;
+    display: none;
     font-size: 25px;
     text-align: center;
     font-weight: normal;
-    padding: 0px;
+    padding: 20px 260px 5px;
     margin: 0px;
     color: white;
 }
 
+@media (max-width: 1000px) {
+    h1 {
+        display: none;
+    }
+}
+
 /* Pages */
 .homepage, .convert_page, .list_page {
+    padding: 25px;
     text-align: center;
-    padding: 0px 25px 50px;
 }
 
 .convert_page, .list_page {
@@ -88,13 +140,12 @@ h1 {
 
 /* Homepage */
 .link {
-    box-sizing: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.180);
     display: inline-block;
-    width: 400px;
-    margin: 40px 75px;
-    padding: 30px;
     vertical-align: top;
+    width: 400px;
+    margin: 30px 75px;
+    padding: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.180);
 }
 
 .link:link, .link:visited {
@@ -111,56 +162,63 @@ h1 {
     color: #0782c8;
 }
 
+@media (max-width: 620px) {
+    .link {
+        width: 70%;
+        margin: 30px auto;
+    }
+}
+
 /* Convert page */
 .convert_page h2 {
-    text-align: center;
     position: absolute;
-    font-weight: normal;
+    width: 100%;
     top: 0px;
     margin: 0px;
-    padding: 7px 0px;
+    padding: 6px 0px;
+    text-align: center;
+    font-weight: normal;
     font-size: 22px;
     background-color: rgba(0, 0, 0, 0.115);
-    width: 100%;
     border-radius: 2px 2px 0px 0px;
 }
 
 .convert_page .icon {
     position: absolute;
-    left: 8px;
     top: 10px;
-    color: black;
-    font-size: 22px;
+    left: 8px;
+    font-size: 20px;
+    color: grey;
 }
 
 .select, .calculate {
     position: relative;
     text-align: center;
     width: 80%;
-    padding: 100px 0px 60px;
-    margin: 30px auto;
+    margin: 25px auto;
+    padding: 40px 0px 0px;
     background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.180);
     border-radius: 3px;
 }
 
 .calculate {
-    padding: 100px 0px 100px;
+    margin-top: 50px;
+    padding-bottom: 30px;
 }
 
 .input1, .input2, .list1, .list2 {
-    margin: 0px 50px;
     font-size: 20px;
     font-family: 'Antic';
-    border: 1px solid rgba(0, 0, 0, 0.180);
+    margin: 60px 50px;
     padding: 5px 0px;
+    border: 1px solid rgba(0, 0, 0, 0.180);
     border-radius: 5px;
 }
 
 .input1, .input2 {
-    text-align: center;
-    padding-right: 15px;
-    margin: 0px 100px;
+    text-align: right;
+    padding-right: 10px;
     width: 20%;
 }
 
@@ -192,18 +250,56 @@ h1 {
 
 .stringSelect {
     position: absolute;
-    top: 35px;
     width: 100%;
+    margin: 0px;
+    top: 50px;
     font-size: 18px;
 }
 
 .stringConvert {
     position: absolute;
-    bottom: 10px;
     width: 100%;
+    margin: 0px;
+    bottom: 35px;
     font-size: 18px;
 }
 
+@media (max-width: 1000px) {
+    .select, .calculate {
+        width: 90%;
+    }
+    
+    .list1, .list2 {
+        display: block;
+        width: 70%;
+        margin: 30px auto;
+    }
+    
+    .input1, .input2 {
+        display: block;
+        width: 60%;
+        margin: 40px auto;
+    }
+
+    .stringSelect {
+        top: 45px;
+    }
+    
+    .stringConvert {
+        bottom: 15px;
+    }
+
+    .convert_page .icon {
+        font-size: 18px;
+    }
+
+}
+
+@media (max-width: 400px) {
+    .convert_page .icon {
+        display: none;
+    }
+}
 /* List page*/
 .search {
     font-size: 22px;
@@ -218,7 +314,6 @@ h1 {
 }
 
 .rates {
-    box-sizing: border-box;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     grid-template-rows: repeat(auto-fit, 1fr);
@@ -226,6 +321,12 @@ h1 {
     justify-items: center;
     width: 100%;
     padding: 0px 80px;
+}
+
+@media (max-width: 430px) {
+    .rates {
+        padding: 0px;
+    }
 }
 
 .currency_rates {
@@ -236,7 +337,6 @@ h1 {
 }
 
 .currency, .rate {
-    box-sizing: border-box;
     display: inline-block;
     width: 50%;
     padding: 10px;
@@ -284,14 +384,22 @@ h1 {
 
 .spinner.one, .spinner.zero {
     position: absolute;
-    left: 720px;
-    top: 105px;
-    width: 50px;
-    margin: 0px;
+    width: 100%;
+    margin: 0px auto;
 }
 
 .spinner.zero {
     top: 50px;
+}
+
+.spinner.one {
+    bottom: 60px;
+}
+
+@media (max-width: 1000px) {
+    .spinner.one {
+        bottom: 40px;
+    }
 }
 
 .spinner.one > div, .spinner.zero > div {
@@ -332,7 +440,7 @@ h1 {
     position: fixed;
     margin: 0px;
     bottom: 25px;
-    right: 25px;
+    right: 15px;
     padding: 7px;
     border-radius: 3px;
     font-weight: bold;
