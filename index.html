@@ -3,7 +3,9 @@
   <head>
     <title>Currency Converter</title>
     <meta charset = "UTF-8">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0782c8">
+    <meta name="msapplication-navbutton-color" content="#0782c8">
     <link rel='stylesheet' href='style.css' />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="icon" href="favicon.ico">
@@ -20,6 +22,7 @@
         <i class="material-icons icon">
           home
         </i>
+        Home
       </a>
       
       <a href="#" class="convert">
@@ -32,13 +35,9 @@
       <a href="#" class="list">
         <i class="material-icons icon">
           view_module
-        </i>
+          </i>
         List
       </a>
-      
-      <a href="#" id="toggle">&#9776;</a>
-
-      <h1>Currency Converter</h1>
       
     </div>
 
@@ -76,8 +75,9 @@
     <!-- Convert page -->
     <div class = "convert_page">
 
+      <h2>Convert</h2>
       <div class = "select">
-        <h2>Choose your currencies</h2>
+        <h3>Choose your currencies</h3>
         <i class="material-icons icon">euro_symbol</i>
         <!-- spinner -->
         <div class="spinner zero">
@@ -92,7 +92,7 @@
       
       
       <div class="calculate">
-        <h2>Convert from both sides</h2>
+        <h3>Convert from both sides</h3>
         <i class="material-icons icon">transform</i>
         <input type = "text" class="input1" placeholder="Amount:"></input>
         <input type = "text" class="input2" placeholder="Amount:"></input>

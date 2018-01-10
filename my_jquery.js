@@ -8,12 +8,6 @@ $(document).ready(function() {
     var rates = 0;
     var timestamp = '';
 
-    // Toggle navbar action
-    $('#toggle').off().on('click', function(event) {
-        event.preventDefault();
-        toggleNavbar();
-    })
-
     // Home action
     homeButton.off().on('click', function(event) {
         event.preventDefault();
@@ -73,14 +67,6 @@ $(document).ready(function() {
         event.preventDefault();
         scrollToTop($(this));
     })
-
-    // Toggle navbar
-    function toggleNavbar() {
-
-        var navbar = $('.nav');
-        navbar.toggleClass('responsive');
-
-    }
 
     // Populate Homepage
     function populateHomepage() {
@@ -297,7 +283,7 @@ $(document).ready(function() {
         $('.nav').children('.list').addClass('active');
 
         $('.stringList').remove();
-        $('.search').focus();
+        // $('.search').focus();
 
         // Use cached data if possible
         var lastTimestamp = Number($('.timestamp').attr('data-utc'));
