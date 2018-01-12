@@ -3,100 +3,143 @@ $(document).ready(function() {
     var homeButton = $('.home');
     var convertButton = $('.convert');
     var listButton = $('.list');
+    var navbar = $('.nav');
+    var homePage = $('.homepage');
+    var convertPage = $('.convert_page');
+    var listPage = $('.list_page');
+
+    var selectWindow = $('.select_window');
+    var select1 = $('.select1');
+    var select2 = $('.select2');
+    var swapButton = $('.swap');
+    var convertWindow = $('.convert_window');
     var input1 = $('.input1');
     var input2 = $('.input2');
+
+    var searchField = $('.search');
+    var toTopButton = $('#toTop');
+    
     var rates = 0;
     var timestamp = '';
 
     // Home action
-    homeButton.off().on('click', function(event) {
+    homeButton.on('click', function(event) {
+
         event.preventDefault();
         populateHomepage();
-        $('.nav').removeClass('responsive');
+
     })
 
     // Convert action
-    convertButton.off().on('click', function(event) {
+    convertButton.on('click', function(event) {
+
         event.preventDefault();
         populateConvertPage();
-        $('.nav').removeClass('responsive');
+
     })
 
     // List action
-    listButton.off().on('click', function(event) {
+    listButton.on('click', function(event) {
+
         event.preventDefault();
         populateListPage();
-        $('.nav').removeClass('responsive');
+
     })
 
     // Select action
-    $('select').off().on('change', function() {
-        calculate($('.input1'));
+    $('.select1, .select2').on('change', function() {
+
+        calculate(input1);
+
     })
 
     // Swap action
-    $('.swap').off().on('click', function(event) {
+    swapButton.on('click', function(event) {
+
         event.preventDefault();
         swap();
+
     })
 
     // Input 1 action
-    input1.off().on('keyup', function() {
+    input1.on('keyup', function() {
+        
         var field = $(this);
         calculate(field);
+
     })
 
     // Input 2 action
-    input2.off().on('keyup', function() {
+    input2.on('keyup', function() {
+
         var field = $(this);
         calculate(field);
+
     })
 
     // Search action
-    $('.search').off().on('keyup', function() {
+    searchField.on('keyup', function() {
+        
         search($(this));
+
     })
 
     // Scroll action
-    $(window).off().on('scroll', function() {
-        showScrollButton()
+    $(window).on('scroll', function() {
+
+        showToTopButton();
+
     })
 
-    // Scroll button action
-    $('#toTop').off().on('click', function(event) {
+    // To top button action
+    toTopButton.on('click', function(event) {
+
         event.preventDefault();
-        scrollToTop($(this));
+        scrollToTop();
+
     })
 
     // Populate Homepage
     function populateHomepage() {
 
-        $('.convert_page, .list_page').hide();
-        $('.homepage').show();
+        convertPage.hide();
+        listPage.hide()
+        homePage.show();
+
+        $('html').scrollTop(0);
 
         // Highlight the nav button
-        $('.nav').children('a').removeClass('active');
-        $('.nav').children('.home').addClass('active');
+        var navButtons = $('.nav').children('a');
+        navButtons.removeClass('active');
+        var navHomeButton = navButtons.filter('.home');
+        navHomeButton.addClass('active');
 
     }
 
     // Populate Convert page
     function populateConvertPage() {
         
-        $('.homepage, .list_page').hide();
-        $('.convert_page').show();
+        homePage.hide();
+        listPage.hide();
+        convertPage.show();
+
+        $('html').scrollTop(0);
 
         // Highlight the nav button
-        $('.nav').children('a').removeClass('active');
-        $('.nav').children('.convert').addClass('active');
+        var navButtons = $('.nav').children('a');
+        navButtons.removeClass('active');
+        var navConvertButton = navButtons.filter('.convert');
+        navConvertButton.addClass('active');
 
-        $('.stringSelect').remove();
+        var string = $('.stringSelect');
+        string.remove();
 
-        // If the lists are empty, try to get new currencies
-        if ($('.list1').find('option').length < 1) {
+        // If the selection lists are empty, try to get new currencies
+        if (select1.children('option').length < 1) {
             
             // Show the spinner
-            $('.spinner.zero').show();
+            var spinner = $('.spinner.zero');
+            spinner.show();
 
             $.ajax({
                 url: 'https://openexchangerates.org/api/currencies.json',
@@ -106,19 +149,21 @@ $(document).ready(function() {
             .done(function(currencies) {
 
                 for(currency in currencies) {
-                    let option = $('<option></option>');
-                    option.text(currencies[currency]);
-                    option.attr('value',currency);
+
+                    let newOption = $('<option></option>');
+                    newOption.text(currencies[currency]);
+                    newOption.attr('value', currency);
                     
-                    $('.list1, .list2').append(option);
+                    $('.select1, .select2').append(newOption);
+
                 }
 
                 // Hide the spinner
-                $('.spinner.zero').hide();
+                spinner.hide();
 
                 // Convert eur to mkd
-                var eur = $('.list1').find($('option')).filter('[value="EUR"]');
-                var mkd = $('.list2').find($('option')).filter('[value="MKD"]');
+                var eur = select1.find($('option')).filter('[value="EUR"]');
+                var mkd = select2.find($('option')).filter('[value="MKD"]');
                 eur.attr('selected','');
                 mkd.attr('selected','');
                 input1.val(1);
@@ -128,12 +173,12 @@ $(document).ready(function() {
             .fail(function(err) {
                 
                 // Hide the spinner
-                $('.spinner.zero').hide();
+                spinner.hide();
 
-                var str = $('<p></p>');
-                str.addClass('stringSelect');
-                str.text('Can\'t get access to currencies');
-                $('.list1').before(str);
+                let string = $('<p></p>');
+                string.text('Can\'t get access to currencies');
+                string.addClass('stringSelect');
+                select1.before(string);
 
             })
         }
@@ -141,61 +186,66 @@ $(document).ready(function() {
     }
 
     // Calculate
-    function calculate(field) {
-
+    function calculate(inputField) {
+        
+        var convertWindow = $('.convert_window');
+        var outputField = inputField.siblings('input');
+        var value = inputField.val();
+        var fromRate = 0;
+        var toRate = 0;
+        var spinner = $('.spinner.one');
+        
         // Remove previous result
-        $('.stringConvert').remove()
-
-        var val = field.val();
+        let string = $('.stringConvert');
+        string.remove();
         
         // If the field is empty, or it isn't a number, or there was problem getting currencies
-        if (val.length < 1 || isNaN(val) || $('.stringSelect').length > 0) { 
+        if (value.length < 1 || isNaN(value) || $('.stringSelect').length > 0) { 
             
-            $(field).siblings().filter('input').val('');
-            let str = $('<p></p>').addClass('stringConvert');
+            outputField.val('');
+            let string = $('<p></p>')
+            string.addClass('stringConvert');
 
-            if (isNaN(val) == true) {
-                str.text('Valid numbers only!')
+            if (isNaN(value) == true) {
+
+                string.text('Valid numbers only!')
+
             } else if ($('.stringSelect').length > 0) {
-                str.text('Can\'t get access to currencies');
+
+                string.text('Can\'t get access to currencies');
+
             } else {
-                str.text('Result here.');
+
+                string.text('Result here.');
+
             }
 
-            $('.calculate').append(str)
+            convertWindow.append(string);
             return
+            
         };
 
-        // Currencies selection
-        var select1 = $('.list1');
-        var select2 = $('.list2');
-
         // Conversion direction
-        var currentField = field.attr('class');
-        if (currentField == 'input1') {
+        if (inputField.hasClass('input1')) {
 
-            var from = $('.list1').val(),
-                to = $('.list2').val(),
-                value = Number(val),
-                fromRate = 0,
-                toRate = 0;
+            var fromCurrency = select1.val();
+            var toCurrency = select2.val();
 
         } else {
 
-            var from = $('.list2').val(),
-                to = $('.list1').val(),
-                value = Number(val),
-                fromRate = 0,
-                toRate = 0;
+            var fromCurrency = select2.val();
+            var toCurrency = select1.val();
 
         }
         
-        // Use cached data if possible
-        var lastTimestamp = Number($('.timestamp').attr('data-utc'));
-        if (($('.timestamp').length < 1) || (lastTimestamp + 3900000 < Date.now())) {
+        // Use new data if needed
+        var oldTimestampElem = $('.timestamp');
+        var timestampMs = Number(oldTimestampElem.attr('data-utc'));
+
+        if ((oldTimestampElem.length < 1) || (timestampMs + 3900000 < Date.now())) {
             
             // Show the spinner
-            $('.spinner.one').show();
+            spinner.show();
 
             var appId = '639ecf153c634cfab7dab275a5b6921e';
             var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
@@ -206,93 +256,110 @@ $(document).ready(function() {
                 dataType: 'json',
                 timeout: 4000
             })
-            .done(function (returnValue) {
+            .done(function(returnValue) {
 
-                // timestamp 
+                // Received timestamp 
+                timestampMs = Number(returnValue.timestamp) * 1000;
                 var d = new Date(0);
-                d.setUTCMilliseconds(Number(returnValue.timestamp) * 1000);
+                d.setUTCMilliseconds(timestampMs);
 
                 // Create new timestamp or update the old one
-                if ($('.timestamp').length < 1) {
-                    let timestamp = $('<span></span>')
-                    timestamp.addClass('timestamp');
-                    timestamp.attr('data-utc', Number(returnValue.timestamp) * 1000)
-                    timestamp.text('Updated: ' + d.toLocaleTimeString());
-                    $('body').prepend(timestamp);
+                if (oldTimestampElem.length < 1) {
+
+                    let newTimestampElem = $('<span></span>');
+                    newTimestampElem.addClass('timestamp');
+                    newTimestampElem.attr('data-utc', timestampMs)
+                    newTimestampElem.text('Updated: ' + d.toLocaleTimeString());
+                    $('body').prepend(newTimestampElem);
+
                 } else {
-                    $('.timestamp').attr('data-utc', Number(returnValue.timestamp) * 1000);
-                    $('.timestamp').text('Updated: ' + d.toLocaleTimeString())
+
+                    oldTimestampElem.attr('data-utc', timestampMs);
+                    oldTimestampElem.text('Updated: ' + d.toLocaleTimeString());
+
                 }
                 
                 // Update rates
                 rates = returnValue.rates
 
-                fromRate = Number(rates[from])
-                toRate = Number(rates[to]);
+                // Calculate the result with new data
+                fromRate = Number(rates[fromCurrency])
+                toRate = Number(rates[toCurrency]);
                 var endResult = value / fromRate * toRate;
                 endResult = +endResult.toFixed(4)
-                $(field).siblings().filter('input').val(endResult);
-                var str =  $('<p></p>').addClass('stringConvert');
-                str.text(value + ' ' + from + ' = ' + endResult + ' ' + to);
-                
-                // In case there was a late previous string displayed
-                $('.stringConvert').remove();
 
-                $('.calculate').append(str);
-                
-                // Hide spinner
-                $('.spinner.one').hide();
+                // Display the result
+                outputField.val(endResult);
+                $('.stringConvert').remove();
+                let string = $('<p></p>')
+                string.addClass('stringConvert');
+                string.text(value + ' ' + fromCurrency + ' = ' + endResult + ' ' + toCurrency);
+                convertWindow.append(string);
+                spinner.hide();
                 
             })
             .fail (function(err) {
 
-                $('.spinner.one').hide();
-                var str =  $('<p></p>').addClass('stringConvert');
-                str.text('Can\'t get access to rates');
-                $('.calculate').append(str);
-
+                let string = $('<p></p>')
+                string.addClass('stringConvert');
+                string.text('Can\'t get access to rates');
+                convertWindow.append(string);
+                spinner.hide();
+                
             })
         
+        // Use cached data
         } else {
 
-            fromRate = Number(rates[from])
-            toRate = Number(rates[to]);
+            // Calculate the result with cached data
+            fromRate = Number(rates[fromCurrency])
+            toRate = Number(rates[toCurrency]);
             endResult = value / fromRate * toRate;
             endResult = +endResult.toFixed(4)
-            $(field).siblings().filter('input').val(endResult);
-            var str =  $('<p></p>').addClass('stringConvert')
-            str.text(value + ' ' + from + ' = ' + endResult + ' ' + to);
-            
-            $('.stringConvert').remove();
-            $('.calculate').append(str);
-            $('.spinner.one').hide();
+
+            // Display the result
+            outputField.val(endResult);
+            $('.string').remove();
+            let string = $('<p></p>');
+            string.addClass('stringConvert');
+            string.text(value + ' ' + fromCurrency + ' = ' + endResult + ' ' + toCurrency);
+            convertWindow.append(string);
+            spinner.hide();
 
         }
 
     }
 
-
     // Populate List page
     function populateListPage() {
 
-        $('.homepage, .convert_page').hide();
-        $('.list_page').show();
+        homePage.hide();
+        convertPage.hide();
+        listPage.show();
+
+        $('html').scrollTop(0);
 
         // Highlight the nav button
-        $('.nav').children('a').removeClass('active');
-        $('.nav').children('.list').addClass('active');
+        var navButtons = $('.nav').children('a');
+        navButtons.removeClass('active');
+        var navListButton = navButtons.filter('.list');
+        navListButton.addClass('active');
 
-        $('.stringList').remove();
-        // $('.search').focus();
+        let string = $('.stringList');
+        string.remove();
 
-        // Use cached data if possible
-        var lastTimestamp = Number($('.timestamp').attr('data-utc'));
+        var oldRatesElem = $('.rates');
+        var spinner = $('.spinner.two');
 
-        if (($('.timestamp').length < 1) || (lastTimestamp + 3900000 < Date.now())){
+        // Use new data if needed
+        var oldTimestampElem = $('.timestamp');
+        var timestampMs = Number(oldTimestampElem.attr('data-utc'));
+
+        if ((oldTimestampElem.length < 1) || (timestampMs + 3900000 < Date.now())){
             
-            // Remove old rates and start the spinner
-            $('.rates').remove();
-            $('.spinner.two').show();
+            // Remove old rates and show the spinner
+            oldRatesElem.remove();
+            spinner.show();
 
             var appId = '639ecf153c634cfab7dab275a5b6921e'
             var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`
@@ -305,75 +372,92 @@ $(document).ready(function() {
             })
             .done(function (returnValue) {
 
-                // timestamp 
+                // Received timestamp
+                timestampMs = Number(returnValue.timestamp) * 1000;
                 var d = new Date(0);
-                d.setUTCMilliseconds(Number(returnValue.timestamp) * 1000);
+                d.setUTCMilliseconds(timestampMs);
 
                 // Create new timestamp or update the old one
-                if ($('.timestamp').length < 1) {
-                    let timestamp = $('<span></span>')
-                    timestamp.addClass('timestamp');
-                    timestamp.attr('data-utc', Number(returnValue.timestamp) * 1000)
-                    timestamp.text('Updated: ' + d.toLocaleTimeString());
-                    $('body').prepend(timestamp);
+                if (oldTimestampElem.length < 1) {
+
+                    let newTimestampElem = $('<span></span>');
+                    newTimestampElem.addClass('timestamp');
+                    newTimestampElem.attr('data-utc', timestampMs)
+                    newTimestampElem.text('Updated: ' + d.toLocaleTimeString());
+                    $('body').prepend(newTimestampElem);
+
                 } else {
-                    $('.timestamp').attr('data-utc', Number(returnValue.timestamp) * 1000);
-                    $('.timestamp').text('Updated: ' + d.toLocaleTimeString())
+
+                    oldTimestampElem.attr('data-utc', timestampMs);
+                    oldTimestampElem.text('Updated: ' + d.toLocaleTimeString());
+
                 }
 
-                var div = $('<div></div>');
-                div.addClass('rates');
+                // Update rates
+                rates = returnValue.rates;
 
-                // Create new rate items with new data
-                rates = returnValue.rates
+                // Create new rates elements with new data
+                var newRatesElem = $('<div></div>');
+                newRatesElem.addClass('rates');
+                
                 for (rate in rates) {
                     
-                    let p = $('<p></p>');
-                    p.addClass('currency_rates');
-                    let currencyField = $('<div></span>').addClass('currency');
-                    currencyField.text(rate)
-                    let rateField = $('<div></div>').addClass('rate');
-                    rateField.text(+rates[rate].toFixed(4))
-                    p.append(currencyField).append(rateField)
-                    div.append(p);
+                    let elem = $('<div></div>');
+                    elem.addClass('currency_rates');
+                    let currencyElem = $('<div></div>');
+                    currencyElem.addClass('currency');
+                    currencyElem.text(rate);
+                    let rateElem = $('<div></div>');
+                    rateElem.addClass('rate');
+                    rateElem.text(+rates[rate].toFixed(4));
+                    elem.append(currencyElem).append(rateElem);
+                    newRatesElem.append(elem);
+                    
                 }
+
+                listPage.append(newRatesElem);
                 
-                // Hide the spinner and add the rates
-                $('.search').val('');
-                $('.spinner.two').hide();
-                $('.list_page').append(div);
+                // Hide the spinner and clear the search
+                spinner.hide();
+                searchField.val('');
                 
             })
-            .fail (function(err) {
+            .fail(function(err) {
 
-                $('.spinner.two').hide();
-                var str = $('<p></p>').addClass('stringList');
-                str.text('Can\'t get access to rates');
-                $('.list_page').append(str);
+                spinner.hide();
+                let string = $('<p></p>')
+                string.addClass('stringList');
+                string.text('Can\'t get access to rates');
+                listPage.append(string);
 
             })
 
-        // Create new rate items with cached data
-        } else if ($('.currency_rates').length < 1) {
+         // Use cached data to create new rates elements
+        } else if (oldRatesElem.length < 1) {
             
-            var div = $('<div></div>');
-            div.addClass('rates');
+            var newRatesElem = $('<div></div>');
+            newRatesElem.addClass('rates');
 
             for (rate in rates) {
                     
-                let p = $('<p></p>');
-                p.addClass('currency_rates');
-                let currencyField = $('<div></span>').addClass('currency');
-                currencyField.text(rate)
-                let rateField = $('<div></div>').addClass('rate');
-                rateField.text(+rates[rate].toFixed(4))
-                p.append(currencyField).append(rateField)
-                div.append(p);
+                let elem = $('<div></div>');
+                elem.addClass('currency_rates');
+                let currencyElem = $('<div></div>');
+                currencyElem.addClass('currency');
+                currencyElem.text(rate);
+                let rateElem = $('<div></div>');
+                rateElem.addClass('rate');
+                rateElem.text(+rates[rate].toFixed(4));
+                elem.append(currencyElem).append(rateElem);
+                newRatesElem.append(elem);
+
             }
 
-            $('.search').val('');
-            $('.spinner.two').hide();
-            $('.list_page').append(div);
+            listPage.append(newRatesElem);
+                
+            // Hide the spinner and clear the search
+            spinner.hide();
+            searchField.val('');
 
         }
 
@@ -382,67 +466,92 @@ $(document).ready(function() {
     // Swap
     function swap() {
 
-        var list1 = $('.list1');
-        var list2 = $('.list2');
-
-        // If the lists are empty
-        if (list1.children('option').length < 1) {
+        // If the selection lists are empty
+        if (select1.children('option').length < 1) {
             return
         }
 
-        // Swap the lists
-        $('.select').prepend(list2);
-        list2.attr('class', 'list1');
-        $('.select').append(list1);
-        list1.attr('class', 'list2');
+        // Swap the selection lists
+        selectWindow.prepend(select2);
+        select2.attr('class', 'select1');
+        selectWindow.append(select1);
+        select1.attr('class', 'select2');
 
+        // Update the references
+        select1 = $('.select1');
+        select2 = $('.select2');
+        
         // Re-calculate
-        calculate($('.input1'))
+        calculate(input1);
 
     }
 
     // Search
     function search(searchField) {
 
-        var val = searchField.val().toUpperCase();
+        var value = searchField.val().toUpperCase();
         var currencyRates = $('.currency_rates');
-
-        // Remove previous string
-        $('.stringList').remove()
+        
+        var string = $('.stringList');
+        string.remove()
 
         // Show or hide currency items
         currencyRates.each(function(i, currencyRate) {
-            let currency = $(currencyRate).children('.currency');
-            if (currency.text().indexOf(val) > -1) {
+
+            let currencyElem = $(currencyRate).children('.currency');
+
+            if (currencyElem.text().indexOf(value) > -1) {
+
                 $(currencyRate).show()
+
             } else {
+
                 $(currencyRate).hide()
+
             }
+
         })
 
-        // Add string
-        if($('.currency_rates[style="display: none;"]').length == currencyRates.length) {
-            let str = $('<p></p>').addClass('stringList').text('No match')
-            $('.list_page').append(str);
+        var invisibleCurrencyRates = currencyRates.filter('[style="display: none;"]');
+        
+        // If there is no match
+        if(invisibleCurrencyRates.length == currencyRates.length) {
+
+            let string = $('<p></p>');
+            string.addClass('stringList');
+            string.text('No match');
+            listPage.append(string);
         }
 
     }
 
-    // Show scroll button
-    function showScrollButton() {
+    // Show 'to top' button
+    function showToTopButton() {
         
-        var scrollButton = $('#toTop');
-        
-        if ($(window).scrollTop() < 100) {
-            scrollButton.fadeOut(200);
+        if ($(window).scrollTop() > 100) {
+
+            toTopButton.fadeIn(200);
+            
         } else {
-            scrollButton.fadeIn(200);
+            
+            toTopButton.fadeOut(200);
+            
         }
 
+        if($(window).scrollTop() > 0) {
+            
+            navbar.addClass('shadow');
+
+        } else {
+
+            navbar.removeClass('shadow');
+
+        }
+        
     }
 
     // Scroll to top
-    function scrollToTop(scrollButton) {
+    function scrollToTop() {
 
         $('html').animate({scrollTop: '0'}, 500);
 
