@@ -86,20 +86,29 @@ $(document).ready(function() {
 
     })
 
+    // Resize action
+    /* $(window).on('resize', function() {
+        
+        checkSize();
+        
+    }) */
+    
     // Scroll action
     $(window).on('scroll', function() {
-
+        
         showToTopButton();
-
+        
     })
-
+    
     // To top button action
     toTopButton.on('click', function(event) {
-
+        
         event.preventDefault();
         scrollToTop();
-
+        
     })
+    
+    // checkSize();
 
     // Populate Homepage
     function populateHomepage() {
@@ -311,7 +320,7 @@ $(document).ready(function() {
                 // Update the timestamp element
                 var timestampDate = new Date(0);
                 timestampDate.setUTCMilliseconds(timestamp);
-                timestampElem.text(timestampDate.toLocaleTimeString())
+                timestampElem.text('Updated: ' + timestampDate.toLocaleTimeString())
                 
                 // Calculate the result
                 fromRate = Number(rates[fromCurrency]);
@@ -335,13 +344,12 @@ $(document).ready(function() {
 
                 spinner.show();
 
-                let appId = '639ecf153c634cfab7dab275a5b6921e';
+                let appId = 'aacb3cb6885a427cbf3e31bbbe34c4f9';
                 let myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
                 
                 $.ajax({
                     url: myurl,
                     method: 'GET',
-                    dataType: 'json',
                     timeout: 4000
                 })
                 .done(function(returnValue) {
@@ -377,6 +385,8 @@ $(document).ready(function() {
                     spinner.hide();
 
                 })
+
+                break;
 
             case 'local storage populated':
 
@@ -419,7 +429,7 @@ $(document).ready(function() {
                 // Update the timestamp element
                 var timestampDate = new Date(0);
                 timestampDate.setUTCMilliseconds(timestamp);
-                timestampElem.text(timestampDate.toLocaleTimeString());
+                timestampElem.text('Updated: ' + timestampDate.toLocaleTimeString());
 
                 // If there are no rates elements displayed
                 if (oldRatesElem.length === 0) {
@@ -454,13 +464,12 @@ $(document).ready(function() {
 
                 spinner.show();
 
-                let appId = '639ecf153c634cfab7dab275a5b6921e';
+                let appId = 'aacb3cb6885a427cbf3e31bbbe34c4f9';
                 let myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
                 
                 $.ajax({
                     url: myurl,
                     method: 'GET',
-                    dataType: 'json',
                     timeout: 4000
                 })
                 .done(function(returnValue) {
@@ -613,6 +622,59 @@ $(document).ready(function() {
         $('html').animate({scrollTop: '0'}, 500);
 
     }
+
+    // Check screen size
+    /* function checkSize() {
+
+        var test = $('.test');
+
+        if (test.css('display') === 'none') {
+
+            console.log('mobile')            
+
+            var curDown = false;
+            var curYPos = 0;
+            var curXPos = 0;
+
+            $(window).mousemove(function(m){
+
+                if (curDown === true && curXPos + 70 < m.pageX) {
+
+                    console.log('swiped right by at least 70')
+                    curDown = false;
+
+                } else if (curDown === true && curXPos - 70 > m.pageX) {
+
+                    console.log('swiped left by at least 70');
+                    curDown = false;
+
+                }
+
+            });
+            
+            $(window).mousedown(function(m){
+
+                console.log('mousedown');
+                curDown = true;
+                curYPos = m.pageY;
+                curXPos = m.pageX;
+
+            });
+            
+            $(window).mouseup(function(){
+
+                console.log('mouseup');
+                curDown = false;
+
+            });
+
+        } else {
+
+            $(window).off('mouseup', 'mousedown', 'mousemove');
+
+        }
+
+    } */
 
 })
     

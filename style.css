@@ -78,8 +78,8 @@ a {
 /* timestamp */
 .timestamp {
     position: fixed;
-    top: 15px;
-    right: 15px;
+    top: 10px;
+    right: 10px;
     color: white;
     z-index: 2;
 }
@@ -485,4 +485,15 @@ a {
 
 #toTop:active {
     background-color: rgba(0, 0, 0, 0.250);
+}
+
+/* Element to test screen width via jquery */
+.test {
+    display: block;
+}
+
+@media (max-width: 425px) {
+    .test {
+        display: none;
+    }
 }
