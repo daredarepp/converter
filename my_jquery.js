@@ -20,6 +20,7 @@ $(document).ready(function() {
     var searchField = $('.search');
     var toTopButton = $('#toTop');
     
+    var currenciesCheck = null;
     var rates = null;
     var timestamp = null;
 
@@ -165,10 +166,8 @@ $(document).ready(function() {
         var string = $('.stringSelect');
         string.remove();
 
-        var selectOptions = $('option');
-
-        // If the selection options are empty, try to get new currencies
-        if (selectOptions.length === 0) {
+        // If there aren't any currencies
+        if (currenciesCheck !== 'populated') {
             
             var spinner = $('.spinner.zero');
             spinner.show();
@@ -179,7 +178,9 @@ $(document).ready(function() {
                 timeout: 4000
             })
             .done(function(currencies) {
-                console.log('REQUEST SENT');
+                console.log('currencies request')
+
+                currenciesCheck = 'populated';
 
                 // Display the new currencies
                 for(currency in currencies) {
@@ -272,7 +273,7 @@ $(document).ready(function() {
             let string = $('<p></p>')
             string.addClass('stringConvert');
 
-            if (isNaN(value) == true) {
+            if (isNaN(value) === true) {
 
                 string.text('Valid numbers only!')
 
@@ -345,7 +346,7 @@ $(document).ready(function() {
                     timeout: 4000
                 })
                 .done(function(returnValue) {
-                    console.log('REQUEST SENT');
+                    console.log('rates request')
 
                     // Update timestamp
                     var ms = Number(returnValue.timestamp) * 1000;
@@ -423,13 +424,13 @@ $(document).ready(function() {
                 timestampElem.text(timestampDate.toLocaleTimeString());
 
                 // If there are no rates elements displayed
-                if (oldRatesElem.length == 0) {
+                if (oldRatesElem.length === 0) {
 
                     var newRatesElem = $('<div></div>');
                     newRatesElem.addClass('rates');
 
                     for (rate in rates) {
-                            
+
                         let elem = $('<div></div>');
                         elem.addClass('currency_rates');
                         let currencyElem = $('<div></div>');
@@ -465,7 +466,7 @@ $(document).ready(function() {
                     timeout: 4000
                 })
                 .done(function(returnValue) {
-                    console.log('REQUEST SENT');
+                    console.log('rates request')
 
                     // Update timestamp
                     var ms = Number(returnValue.timestamp) * 1000;
@@ -572,7 +573,7 @@ $(document).ready(function() {
         var invisibleCurrencyRates = currencyRates.filter('[style="display: none;"]');
         
         // If there is no match
-        if (invisibleCurrencyRates.length == currencyRates.length) {
+        if (invisibleCurrencyRates.length === currencyRates.length) {
 
             let string = $('<p></p>');
             string.addClass('stringList');
