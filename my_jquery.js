@@ -178,7 +178,6 @@ $(document).ready(function() {
                 timeout: 4000
             })
             .done(function(currencies) {
-                console.log('currencies request')
 
                 currenciesCheck = 'populated';
 
@@ -346,7 +345,6 @@ $(document).ready(function() {
                     timeout: 4000
                 })
                 .done(function(returnValue) {
-                    console.log('rates request')
 
                     // Update timestamp
                     var ms = Number(returnValue.timestamp) * 1000;
@@ -466,7 +464,6 @@ $(document).ready(function() {
                     timeout: 4000
                 })
                 .done(function(returnValue) {
-                    console.log('rates request')
 
                     // Update timestamp
                     var ms = Number(returnValue.timestamp) * 1000;
