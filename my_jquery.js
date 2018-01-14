@@ -3,6 +3,7 @@ $(document).ready(function() {
     var homeButton = $('.home');
     var convertButton = $('.convert');
     var listButton = $('.list');
+    var timestampElem = $('.timestamp');
     var navbar = $('.nav');
     var homePage = $('.homepage');
     var convertPage = $('.convert_page');
@@ -19,8 +20,8 @@ $(document).ready(function() {
     var searchField = $('.search');
     var toTopButton = $('#toTop');
     
-    var rates = 0;
-    var timestamp = '';
+    var rates = null;
+    var timestamp = null;
 
     // Home action
     homeButton.on('click', function(event) {
@@ -116,6 +117,36 @@ $(document).ready(function() {
 
     }
 
+    // Check for local storage availability
+    function storageAvailable(type) {
+
+        try {
+
+            var storage = window[type];
+            var x = '__storage_test__';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+
+        } catch(e) {
+
+            return e instanceof DOMException && (
+                // everything except Firefox
+                e.code === 22 ||
+                // Firefox
+                e.code === 1014 ||
+                // test name field too, because code might not be present
+                // everything except Firefox
+                e.name === 'QuotaExceededError' ||
+                // Firefox
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                // acknowledge QuotaExceededError only if there's something already stored
+                storage.length !== 0;
+                
+        }
+
+    }
+
     // Populate Convert page
     function populateConvertPage() {
         
@@ -134,10 +165,11 @@ $(document).ready(function() {
         var string = $('.stringSelect');
         string.remove();
 
-        // If the selection lists are empty, try to get new currencies
-        if (select1.children('option').length < 1) {
+        var selectOptions = $('option');
+
+        // If the selection options are empty, try to get new currencies
+        if (selectOptions.length === 0) {
             
-            // Show the spinner
             var spinner = $('.spinner.zero');
             spinner.show();
 
@@ -147,7 +179,9 @@ $(document).ready(function() {
                 timeout: 4000
             })
             .done(function(currencies) {
+                console.log('REQUEST SENT');
 
+                // Display the new currencies
                 for(currency in currencies) {
 
                     let newOption = $('<option></option>');
@@ -158,7 +192,6 @@ $(document).ready(function() {
 
                 }
 
-                // Hide the spinner
                 spinner.hide();
 
                 // Convert eur to mkd
@@ -172,18 +205,50 @@ $(document).ready(function() {
             })
             .fail(function(err) {
                 
-                // Hide the spinner
-                spinner.hide();
-
+                // Display error string
                 let string = $('<p></p>');
                 string.text('Can\'t get access to currencies');
                 string.addClass('stringSelect');
                 select1.before(string);
 
+                spinner.hide();
+                
             })
+
         }
 
     }
+
+    function conditionRates() {
+
+        // Cached rates up to date
+        if (rates !== null && timestamp + 3900000 >= Date.now()) {
+
+            return 'up to date'
+        
+        // Cached rates outdated
+        } else if (rates !== null && timestamp + 3900000 < Date.now()) {
+
+            return 'outdated'
+
+        // No cached rates, local storage unavailable
+        } else if (rates === null && !storageAvailable('localStorage')) {
+
+            return 'no local storage'
+        
+        // No cached rates, local storage available, local storage empty
+        } else if (rates === null && storageAvailable('localStorage') && !localStorage.getItem('rates')) {
+
+            return 'local storage empty'
+
+        // No cached rates, local storage available, local storage populated
+        } else if (rates === null && storageAvailable('localStorage') && localStorage.getItem('rates')) {
+
+            return 'local storage populated'
+
+        }
+
+    };
 
     // Calculate
     function calculate(inputField) {
@@ -199,10 +264,11 @@ $(document).ready(function() {
         let string = $('.stringConvert');
         string.remove();
         
-        // If the field is empty, or it isn't a number, or there was problem getting currencies
+        // If the field is empty, or it isn't a number, or there aren't any currencies
         if (value.length < 1 || isNaN(value) || $('.stringSelect').length > 0) { 
             
             outputField.val('');
+
             let string = $('<p></p>')
             string.addClass('stringConvert');
 
@@ -222,7 +288,7 @@ $(document).ready(function() {
 
             convertWindow.append(string);
             return
-            
+        
         };
 
         // Conversion direction
@@ -238,99 +304,95 @@ $(document).ready(function() {
 
         }
         
-        // Use new data if needed
-        var oldTimestampElem = $('.timestamp');
-        var timestampMs = Number(oldTimestampElem.attr('data-utc'));
+        switch (conditionRates()) {
 
-        if ((oldTimestampElem.length < 1) || (timestampMs + 3900000 < Date.now())) {
-            
-            // Show the spinner
-            spinner.show();
+            case 'up to date':
 
-            var appId = '639ecf153c634cfab7dab275a5b6921e';
-            var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
-            
-            $.ajax({
-                url: myurl,
-                method: 'GET',
-                dataType: 'json',
-                timeout: 4000
-            })
-            .done(function(returnValue) {
-
-                // Received timestamp 
-                timestampMs = Number(returnValue.timestamp) * 1000;
-                var d = new Date(0);
-                d.setUTCMilliseconds(timestampMs);
-
-                // Create new timestamp or update the old one
-                if (oldTimestampElem.length < 1) {
-
-                    let newTimestampElem = $('<span></span>');
-                    newTimestampElem.addClass('timestamp');
-                    newTimestampElem.attr('data-utc', timestampMs)
-                    newTimestampElem.text('Updated: ' + d.toLocaleTimeString());
-                    $('body').prepend(newTimestampElem);
-
-                } else {
-
-                    oldTimestampElem.attr('data-utc', timestampMs);
-                    oldTimestampElem.text('Updated: ' + d.toLocaleTimeString());
-
-                }
+                // Update the timestamp element
+                var timestampDate = new Date(0);
+                timestampDate.setUTCMilliseconds(timestamp);
+                timestampElem.text(timestampDate.toLocaleTimeString())
                 
-                // Update rates
-                rates = returnValue.rates
-
-                // Calculate the result with new data
-                fromRate = Number(rates[fromCurrency])
+                // Calculate the result
+                fromRate = Number(rates[fromCurrency]);
                 toRate = Number(rates[toCurrency]);
-                var endResult = value / fromRate * toRate;
+                endResult = value / fromRate * toRate;
                 endResult = +endResult.toFixed(4)
 
                 // Display the result
                 outputField.val(endResult);
-                $('.stringConvert').remove();
-                let string = $('<p></p>')
+                $('.string').remove();
+                let string = $('<p></p>');
                 string.addClass('stringConvert');
                 string.text(value + ' ' + fromCurrency + ' = ' + endResult + ' ' + toCurrency);
                 convertWindow.append(string);
-                spinner.hide();
+
+                break;
+
+            case 'outdated':
+            case 'no local storage':
+            case 'local storage empty':
+
+                spinner.show();
+
+                let appId = '639ecf153c634cfab7dab275a5b6921e';
+                let myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
                 
-            })
-            .fail (function(err) {
+                $.ajax({
+                    url: myurl,
+                    method: 'GET',
+                    dataType: 'json',
+                    timeout: 4000
+                })
+                .done(function(returnValue) {
+                    console.log('REQUEST SENT');
 
-                let string = $('<p></p>')
-                string.addClass('stringConvert');
-                string.text('Can\'t get access to rates');
-                convertWindow.append(string);
-                spinner.hide();
-                
-            })
-        
-        // Use cached data
-        } else {
+                    // Update timestamp
+                    var ms = Number(returnValue.timestamp) * 1000;
+                    timestamp = ms;
 
-            // Calculate the result with cached data
-            fromRate = Number(rates[fromCurrency])
-            toRate = Number(rates[toCurrency]);
-            endResult = value / fromRate * toRate;
-            endResult = +endResult.toFixed(4)
+                    // Update rates
+                    var newRates = returnValue.rates;
+                    rates = newRates;
+                    
+                    // Update the local storage if available
+                    if (storageAvailable('localStorage')) {
 
-            // Display the result
-            outputField.val(endResult);
-            $('.string').remove();
-            let string = $('<p></p>');
-            string.addClass('stringConvert');
-            string.text(value + ' ' + fromCurrency + ' = ' + endResult + ' ' + toCurrency);
-            convertWindow.append(string);
-            spinner.hide();
+                        localStorage.setItem('timestamp', ms);
+                        localStorage.setItem('rates', JSON.stringify(newRates));
+
+                    }
+
+                    calculate(inputField);
+                    spinner.hide();
+
+                })
+                .fail(function(err) {
+
+                    // Display error string
+                    let string = $('<p></p>')
+                    string.addClass('stringConvert');
+                    string.text('Can\'t get access to rates');
+                    convertWindow.append(string);
+
+                    spinner.hide();
+
+                })
+
+            case 'local storage populated':
+
+                var storageRates = localStorage.getItem('rates');
+                var storageTimestamp = localStorage.getItem('timestamp');
+
+                rates = JSON.parse(storageRates);
+                timestamp = Number(storageTimestamp)
+                calculate(inputField);
 
         }
 
     }
-
-    // Populate List page
+    
+    // Populate List Page
     function populateListPage() {
 
         homePage.hide();
@@ -351,116 +413,109 @@ $(document).ready(function() {
         var oldRatesElem = $('.rates');
         var spinner = $('.spinner.two');
 
-        // Use new data if needed
-        var oldTimestampElem = $('.timestamp');
-        var timestampMs = Number(oldTimestampElem.attr('data-utc'));
+        switch (conditionRates()) {
 
-        if ((oldTimestampElem.length < 1) || (timestampMs + 3900000 < Date.now())){
-            
-            // Remove old rates and show the spinner
-            oldRatesElem.remove();
-            spinner.show();
+            case 'up to date':
 
-            var appId = '639ecf153c634cfab7dab275a5b6921e'
-            var myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`
+                // Update the timestamp element
+                var timestampDate = new Date(0);
+                timestampDate.setUTCMilliseconds(timestamp);
+                timestampElem.text(timestampDate.toLocaleTimeString());
 
-            $.ajax({
-                url: myurl,
-                method: 'GET',
-                dataType: 'json',
-                timeout: 4000
-            })
-            .done(function (returnValue) {
+                // If there are no rates elements displayed
+                if (oldRatesElem.length == 0) {
 
-                // Received timestamp
-                timestampMs = Number(returnValue.timestamp) * 1000;
-                var d = new Date(0);
-                d.setUTCMilliseconds(timestampMs);
+                    var newRatesElem = $('<div></div>');
+                    newRatesElem.addClass('rates');
 
-                // Create new timestamp or update the old one
-                if (oldTimestampElem.length < 1) {
+                    for (rate in rates) {
+                            
+                        let elem = $('<div></div>');
+                        elem.addClass('currency_rates');
+                        let currencyElem = $('<div></div>');
+                        currencyElem.addClass('currency');
+                        currencyElem.text(rate);
+                        let rateElem = $('<div></div>');
+                        rateElem.addClass('rate');
+                        rateElem.text(+rates[rate].toFixed(4));
+                        elem.append(currencyElem).append(rateElem);
+                        newRatesElem.append(elem);
+        
+                    }
 
-                    let newTimestampElem = $('<span></span>');
-                    newTimestampElem.addClass('timestamp');
-                    newTimestampElem.attr('data-utc', timestampMs)
-                    newTimestampElem.text('Updated: ' + d.toLocaleTimeString());
-                    $('body').prepend(newTimestampElem);
-
-                } else {
-
-                    oldTimestampElem.attr('data-utc', timestampMs);
-                    oldTimestampElem.text('Updated: ' + d.toLocaleTimeString());
+                    listPage.append(newRatesElem);
 
                 }
 
-                // Update rates
-                rates = returnValue.rates;
+                break;
 
-                // Create new rates elements with new data
-                var newRatesElem = $('<div></div>');
-                newRatesElem.addClass('rates');
+            case 'outdated':
+            case 'no local storage':
+            case 'local storage empty':
+
+                spinner.show();
+
+                let appId = '639ecf153c634cfab7dab275a5b6921e';
+                let myurl = `https://openexchangerates.org/api/latest.json?app_id=${appId}`;
                 
-                for (rate in rates) {
+                $.ajax({
+                    url: myurl,
+                    method: 'GET',
+                    dataType: 'json',
+                    timeout: 4000
+                })
+                .done(function(returnValue) {
+                    console.log('REQUEST SENT');
+
+                    // Update timestamp
+                    var ms = Number(returnValue.timestamp) * 1000;
+                    timestamp = ms;
+
+                    // Update rates
+                    var newRates = returnValue.rates;
+                    rates = newRates;
                     
-                    let elem = $('<div></div>');
-                    elem.addClass('currency_rates');
-                    let currencyElem = $('<div></div>');
-                    currencyElem.addClass('currency');
-                    currencyElem.text(rate);
-                    let rateElem = $('<div></div>');
-                    rateElem.addClass('rate');
-                    rateElem.text(+rates[rate].toFixed(4));
-                    elem.append(currencyElem).append(rateElem);
-                    newRatesElem.append(elem);
+                    // Update the local storage if available
+                    if (storageAvailable('localStorage')) {
+
+                        localStorage.setItem('timestamp', ms);
+                        localStorage.setItem('rates', JSON.stringify(newRates));
+
+                    }
+
+                    // Remove outdated rates elements if there are any
+                    oldRatesElem.remove();
+
+                    populateListPage();
+                    searchField.val('');
+                    spinner.hide();
                     
-                }
+                })
+                .fail(function(err) {
 
-                listPage.append(newRatesElem);
-                
-                // Hide the spinner and clear the search
-                spinner.hide();
-                searchField.val('');
-                
-            })
-            .fail(function(err) {
+                    // Display error string
+                    let string = $('<p></p>')
+                    string.addClass('stringList');
+                    string.text('Can\'t get access to rates');
+                    listPage.append(string);
 
-                spinner.hide();
-                let string = $('<p></p>')
-                string.addClass('stringList');
-                string.text('Can\'t get access to rates');
-                listPage.append(string);
-
-            })
-
-         // Use cached data to create new rates elements
-        } else if (oldRatesElem.length < 1) {
-            
-            var newRatesElem = $('<div></div>');
-            newRatesElem.addClass('rates');
-
-            for (rate in rates) {
+                    spinner.hide();
                     
-                let elem = $('<div></div>');
-                elem.addClass('currency_rates');
-                let currencyElem = $('<div></div>');
-                currencyElem.addClass('currency');
-                currencyElem.text(rate);
-                let rateElem = $('<div></div>');
-                rateElem.addClass('rate');
-                rateElem.text(+rates[rate].toFixed(4));
-                elem.append(currencyElem).append(rateElem);
-                newRatesElem.append(elem);
+                })
 
-            }
+                break;
+        
+            case 'local storage populated':
 
-            listPage.append(newRatesElem);
-                
-            // Hide the spinner and clear the search
-            spinner.hide();
-            searchField.val('');
+                let storageTimestamp = localStorage.getItem('timestamp');
+                let storageRates = localStorage.getItem('rates');
+
+                rates = JSON.parse(storageRates);
+                timestamp = Number(storageTimestamp)
+                populateListPage();
 
         }
-
+         
     }
 
     // Swap
@@ -468,7 +523,9 @@ $(document).ready(function() {
 
         // If the selection lists are empty
         if (select1.children('option').length < 1) {
+
             return
+
         }
 
         // Swap the selection lists
@@ -515,12 +572,13 @@ $(document).ready(function() {
         var invisibleCurrencyRates = currencyRates.filter('[style="display: none;"]');
         
         // If there is no match
-        if(invisibleCurrencyRates.length == currencyRates.length) {
+        if (invisibleCurrencyRates.length == currencyRates.length) {
 
             let string = $('<p></p>');
             string.addClass('stringList');
             string.text('No match');
             listPage.append(string);
+
         }
 
     }
@@ -538,6 +596,7 @@ $(document).ready(function() {
             
         }
 
+        // Show shadow on navbar
         if($(window).scrollTop() > 0) {
             
             navbar.addClass('shadow');
