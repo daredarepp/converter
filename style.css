@@ -21,7 +21,6 @@ body {
 
 a {
     -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
 }
 
 /* Navigation */
@@ -46,7 +45,6 @@ a {
     font-size: 18px;
     padding: 15px 0px;
     text-align: center;
-    transition: none;
 }
 
 .nav a:link, .nav a:visited {
@@ -63,9 +61,18 @@ a {
     color: grey;
 }
 
+.nav a.active:hover {
+    background-color: white;
+}
+
 .nav a .icon {
     display: block;
     font-size: 24px;
+}
+@media (max-width: 768px) {
+    .nav a:hover {
+        background-color: inherit;
+    }
 }
 
 @media (max-width: 425px) {
@@ -95,7 +102,7 @@ a {
 }
 
 /* Pages */
-.homepage, .convert_page, .list_page {
+.page {
     padding: 25px;
     text-align: center;
 }
@@ -112,6 +119,7 @@ a {
     margin: 30px 5%;
     padding: 30px;
     border: 1px solid rgba(0, 0, 0, 0.180);
+    transition: border 0.2s;
 }
 
 .link:nth-child(1) {
@@ -162,6 +170,7 @@ a {
     position: absolute;
     width: 100%;
     top: 0px;
+    left: 0px;
     margin: 0px;
     padding: 6px 0px;
     text-align: center;
@@ -219,6 +228,7 @@ a {
     font-size: 24px;
     padding: 0px 6px 2px;
     border-radius: 25px;
+    transition: background-color 0.2s;
 }
 
 .swap:link, .swap:visited {
@@ -226,10 +236,6 @@ a {
     font-weight: bold;
     background-color: rgba(0, 0, 0, 0.115);
     color: #0782c8;
-}
-
-.swap:hover {
-    color: black;
 }
 
 .swap:active {
@@ -471,6 +477,7 @@ a {
     font-weight: bold;
     border: none;
     outline: none;
+    transition: background-color 0.2s;
 }
 
 #toTop:link, #toTop:visited {
@@ -479,21 +486,6 @@ a {
     color: #0782c8;
 }
 
-#toTop:hover {
-    color: black;
-}
-
 #toTop:active {
     background-color: rgba(0, 0, 0, 0.250);
-}
-
-/* Element to test screen width via jquery */
-.test {
-    display: block;
-}
-
-@media (max-width: 425px) {
-    .test {
-        display: none;
-    }
 }

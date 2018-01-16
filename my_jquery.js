@@ -8,6 +8,7 @@ $(document).ready(function() {
     var homePage = $('.homepage');
     var convertPage = $('.convert_page');
     var listPage = $('.list_page');
+    var pages = $('.page');
 
     var selectWindow = $('.select_window');
     var select1 = $('.select1');
@@ -23,6 +24,13 @@ $(document).ready(function() {
     var currenciesCheck = null;
     var rates = null;
     var timestamp = null;
+
+    var startX = 0;
+    var startY = 0;
+    var endX = 0;
+    var endY = 0;
+    var swipe = true;
+    var timeout;
 
     // Home action
     homeButton.on('click', function(event) {
@@ -85,13 +93,6 @@ $(document).ready(function() {
         search($(this));
 
     })
-
-    // Resize action
-    /* $(window).on('resize', function() {
-        
-        checkSize();
-        
-    }) */
     
     // Scroll action
     $(window).on('scroll', function() {
@@ -108,7 +109,30 @@ $(document).ready(function() {
         
     })
     
-    // checkSize();
+    // Touch start
+    $(pages).on('touchstart', function(e){
+        
+        var touches = e.targetTouches;
+        touchStart(touches);
+        
+    });
+
+    // Touch move
+    $(pages).on('touchmove', function(e) {
+        
+        var touches = e.changedTouches;
+        touchMove(touches);    
+        
+    });
+    
+    // Touch end
+    $(pages).on('touchend', function(e){
+
+        var touches = e.changedTouches;
+        var element = $(this);
+        touchEnd(touches, element);
+        
+    });
 
     // Populate Homepage
     function populateHomepage() {
@@ -419,7 +443,6 @@ $(document).ready(function() {
         let string = $('.stringList');
         string.remove();
 
-        var oldRatesElem = $('.rates');
         var spinner = $('.spinner.two');
 
         switch (conditionRates()) {
@@ -432,7 +455,7 @@ $(document).ready(function() {
                 timestampElem.text('Updated: ' + timestampDate.toLocaleTimeString());
 
                 // If there are no rates elements displayed
-                if (oldRatesElem.length === 0) {
+                if ($('.rates').length === 0) {
 
                     var newRatesElem = $('<div></div>');
                     newRatesElem.addClass('rates');
@@ -462,6 +485,10 @@ $(document).ready(function() {
             case 'no local storage':
             case 'local storage empty':
 
+                
+                // Remove outdated rates elements if there are any
+                $('.rates').remove();
+
                 spinner.show();
 
                 let appId = 'aacb3cb6885a427cbf3e31bbbe34c4f9';
@@ -490,9 +517,6 @@ $(document).ready(function() {
 
                     }
 
-                    // Remove outdated rates elements if there are any
-                    oldRatesElem.remove();
-
                     populateListPage();
                     searchField.val('');
                     spinner.hide();
@@ -518,7 +542,8 @@ $(document).ready(function() {
                 let storageRates = localStorage.getItem('rates');
 
                 rates = JSON.parse(storageRates);
-                timestamp = Number(storageTimestamp)
+                timestamp = Number(storageTimestamp);
+
                 populateListPage();
 
         }
@@ -623,58 +648,84 @@ $(document).ready(function() {
 
     }
 
-    // Check screen size
-    /* function checkSize() {
+    // Touch start
+    function touchStart(touches) {
 
-        var test = $('.test');
+        startX = touches[0].screenX;
+        startY = touches[0].screenY;
 
-        if (test.css('display') === 'none') {
+        // If it takes more than 1 second
+        timeout = setTimeout(function() {
 
-            console.log('mobile')            
+            swipe = false;
 
-            var curDown = false;
-            var curYPos = 0;
-            var curXPos = 0;
+        },1000)
 
-            $(window).mousemove(function(m){
+    }
 
-                if (curDown === true && curXPos + 70 < m.pageX) {
+    // Touch move
+    function touchMove(touches) {
 
-                    console.log('swiped right by at least 70')
-                    curDown = false;
-
-                } else if (curDown === true && curXPos - 70 > m.pageX) {
-
-                    console.log('swiped left by at least 70');
-                    curDown = false;
-
-                }
-
-            });
+        // If the finger moves too far up or down
+        if (touches[0].screenY - startY > 20 || startY - touches[0].screenY > 20) {
             
-            $(window).mousedown(function(m){
-
-                console.log('mousedown');
-                curDown = true;
-                curYPos = m.pageY;
-                curXPos = m.pageX;
-
-            });
+            swipe = false;
             
-            $(window).mouseup(function(){
+        }
 
-                console.log('mouseup');
-                curDown = false;
+    }
 
-            });
+    // Touch end
+    function touchEnd(touches, element) {
 
-        } else {
+        endX = touches[0].screenX;
+        endY = touches[0].screenY;
 
-            $(window).off('mouseup', 'mousedown', 'mousemove');
+        
+        // Swipe right
+        if (endX - startX > 30 && swipe) {
+
+            // List to Convert
+            if (element.hasClass('list_page')) {
+                
+                populateConvertPage();
+                convertPage.css({'opacity': '0'})
+                convertPage.animate({'opacity': '1'}, 200)
+
+            // Convert to Home
+            } else if (element.hasClass('convert_page')) {
+
+                populateHomepage();
+                homePage.css({'opacity': '0'})
+                homePage.animate({'opacity': '1'}, 200)
+
+            }
+
+        // Swipe left
+        } else if (startX - endX > 30 && swipe) {
+            
+            // Home to Convert
+            if (element.hasClass('homepage')) {
+
+                populateConvertPage();
+                convertPage.css({'opacity': '0'})
+                convertPage.animate({'opacity': '1'}, 200)
+
+            // Convert to List
+            } else if (element.hasClass('convert_page')) {
+
+                populateListPage();
+                listPage.css({'opacity': '0'})
+                listPage.animate({'opacity': '1'}, 200)
+
+            }
 
         }
 
-    } */
+        clearTimeout(timeout);
+        swipe = true;
+
+    }
 
 })
     
