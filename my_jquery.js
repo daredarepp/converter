@@ -27,9 +27,9 @@ $(document).ready(function() {
 
     var startX = 0;
     var startY = 0;
-    var endX = 0;
-    var endY = 0;
-    var swipe = true;
+    var currentX = 0;
+    var currentY = 0;
+    var swipe;
     var timeout;
 
     // Home action
@@ -121,16 +121,15 @@ $(document).ready(function() {
     $(pages).on('touchmove', function(e) {
         
         var touches = e.changedTouches;
-        touchMove(touches);    
+        var element = $(this);
+        touchMove(touches, element);    
         
     });
     
     // Touch end
     $(pages).on('touchend', function(e){
 
-        var touches = e.changedTouches;
-        var element = $(this);
-        touchEnd(touches, element);
+        touchEnd();
         
     });
 
@@ -654,7 +653,9 @@ $(document).ready(function() {
         startX = touches[0].screenX;
         startY = touches[0].screenY;
 
-        // If it takes more than 1 second
+        swipe = true;
+
+        // Touch stays longer than 1 second
         timeout = setTimeout(function() {
 
             swipe = false;
@@ -664,66 +665,58 @@ $(document).ready(function() {
     }
 
     // Touch move
-    function touchMove(touches) {
+    function touchMove(touches, element) {
 
-        // If the finger moves too far up or down
-        if (touches[0].screenY - startY > 20 || startY - touches[0].screenY > 20) {
+        currentX = touches[0].screenX;
+        currentY = touches[0].screenY;
+
+        // Touch moves too far up or down
+        if (currentY - startY > 20 || startY - currentY > 20) {
             
             swipe = false;
             
-        }
-
-    }
-
-    // Touch end
-    function touchEnd(touches, element) {
-
-        endX = touches[0].screenX;
-        endY = touches[0].screenY;
-
-        
         // Swipe right
-        if (endX - startX > 30 && swipe) {
+        } else if (currentX - startX > 30 && swipe) {
 
             // List to Convert
             if (element.hasClass('list_page')) {
                 
                 populateConvertPage();
-                convertPage.css({'opacity': '0'})
-                convertPage.animate({'opacity': '1'}, 200)
 
             // Convert to Home
             } else if (element.hasClass('convert_page')) {
 
                 populateHomepage();
-                homePage.css({'opacity': '0'})
-                homePage.animate({'opacity': '1'}, 200)
 
             }
 
+            swipe = false;
+
         // Swipe left
-        } else if (startX - endX > 30 && swipe) {
+        } else if (startX - currentX > 30 && swipe) {
             
             // Home to Convert
             if (element.hasClass('homepage')) {
 
                 populateConvertPage();
-                convertPage.css({'opacity': '0'})
-                convertPage.animate({'opacity': '1'}, 200)
 
             // Convert to List
             } else if (element.hasClass('convert_page')) {
 
                 populateListPage();
-                listPage.css({'opacity': '0'})
-                listPage.animate({'opacity': '1'}, 200)
 
             }
 
+            swipe = false;
+
         }
 
+    }
+
+    // Touch end
+    function touchEnd() {
+
         clearTimeout(timeout);
-        swipe = true;
 
     }
 
