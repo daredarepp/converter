@@ -617,7 +617,7 @@ $(document).ready(function() {
     // Show 'to top' button
     function showToTopButton() {
         
-        if ($(window).scrollTop() > 100) {
+        if ($(window).scrollTop() > 250) {
 
             toTopButton.fadeIn(200);
             
