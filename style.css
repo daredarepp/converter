@@ -8,7 +8,7 @@ html {
 
 body {
     margin: 0px;
-    padding: 54px 0px 0px;
+    padding: 58px 0px 0px;
     font-family: 'Antic';
     width: 100%;
 }
@@ -43,7 +43,7 @@ a {
     display: inline-block;
     float: left;
     font-size: 18px;
-    padding: 15px 15px 15px 10px;
+    padding: 17px 15px 17px 10px;
     text-align: center;
 }
 
@@ -87,7 +87,7 @@ a {
 /* timestamp */
 .timestamp {
     position: fixed;
-    top: 5px;
+    top: 18px;
     right: 10px;
     color: white;
     z-index: 2;
@@ -170,21 +170,21 @@ a {
     
     .link h2 {
         margin: 0px 0px 10px;
-        font-weight: normal;
-        color: #0782c8;
+        /* font-weight: normal; */
+        /* color: #0782c8; */
         text-align: left;
         padding-left: 45%;
     }
 
     .link .icon {
         position: absolute;
-        font-size: 24vw;
-        top: 26%;
-        left: 8%;
+        font-size: 85px;
+        top: 30%;
+        left: 7%;
     }
 
     .link:first-child .icon {
-        font-size: 23vw;
+        font-size: 83px;
     }
 
     .description {

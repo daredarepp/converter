@@ -1,5 +1,6 @@
 $(document).ready(function() {
     
+    // Elements
     var homeButton = $('.home');
     var convertButton = $('.convert');
     var listButton = $('.list');
@@ -21,16 +22,24 @@ $(document).ready(function() {
     var searchField = $('.search');
     var toTopButton = $('#toTop');
     
+    // Caching
     var currenciesCheck = null;
     var rates = null;
     var timestamp = null;
 
+    // Swiping
     var startX = 0;
     var startY = 0;
     var currentX = 0;
     var currentY = 0;
     var swipe;
     var timeout;
+
+    // Scroll positions
+    var currentPage = 'home';
+    var homeScroll = 0;
+    var convertScroll = 0;
+    var listScroll = 0;
 
     // Home action
     homeButton.on('click', function(event) {
@@ -136,11 +145,13 @@ $(document).ready(function() {
     // Populate Homepage
     function populateHomepage() {
 
+        saveScrollPos();
         convertPage.hide();
         listPage.hide()
         homePage.show();
 
-        $('html').scrollTop(0);
+        $('html').scrollTop(homeScroll);
+        currentPage = 'home';
 
         // Highlight the nav button
         var navButtons = $('.nav').children('a');
@@ -183,11 +194,13 @@ $(document).ready(function() {
     // Populate Convert page
     function populateConvertPage() {
         
+        saveScrollPos();
         homePage.hide();
         listPage.hide();
         convertPage.show();
 
-        $('html').scrollTop(0);
+        $('html').scrollTop(convertScroll);
+        currentPage = 'convert';
 
         // Highlight the nav button
         var navButtons = $('.nav').children('a');
@@ -251,6 +264,7 @@ $(document).ready(function() {
 
     }
 
+    // Rates conditions
     function conditionRates() {
 
         // Cached rates up to date
@@ -421,17 +435,18 @@ $(document).ready(function() {
                 calculate(inputField);
 
         }
-
     }
     
     // Populate List Page
     function populateListPage() {
 
+        saveScrollPos();
         homePage.hide();
         convertPage.hide();
         listPage.show();
 
-        $('html').scrollTop(0);
+        $('html').scrollTop(listScroll);
+        currentPage = 'list';
 
         // Highlight the nav button
         var navButtons = $('.nav').children('a');
@@ -612,6 +627,24 @@ $(document).ready(function() {
 
         }
 
+    }
+
+    // Save scroll position
+    function saveScrollPos() {
+
+        switch (currentPage) {
+
+            case 'home':
+                homeScroll = $(window).scrollTop();
+                break;
+
+            case 'convert':
+                convertScroll = $(window).scrollTop();
+                break;
+
+            case 'list':
+                listScroll = $(window).scrollTop();
+        }
     }
 
     // Show 'to top' button
