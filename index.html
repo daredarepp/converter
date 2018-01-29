@@ -97,8 +97,8 @@
       <div class="convert_window">
         <h3>Convert from both sides</h3>
         <i class="material-icons icon">transform</i>
-        <input type = "text" class="input1" placeholder="Amount:"></input>
-        <input type = "text" class="input2" placeholder="Amount:"></input>
+        <input type = "text" class="input1" placeholder="Amount:" autocomplete="off">
+        <input type = "text" class="input2" placeholder="Amount:" autocomplete="off">
         <!-- spinner -->
         <div class="spinner one">
           <div class="bounce1"></div>
@@ -114,7 +114,10 @@
     <div class = "list_page page">
 
       <h2>Rates</h2>
-      <input type="text" placeholder="Search" class="search"></input>
+      <div class="search_bar">
+        <label for="search" class="material-icons icon">search</label>
+        <input type="text" placeholder="Search" id="search" autocomplete="off">
+      </div>
       <!-- Spinner -->
       <div class="spinner two">
         <div class="bounce1"></div>

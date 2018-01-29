@@ -19,7 +19,8 @@ $(document).ready(function() {
     var input1 = $('.input1');
     var input2 = $('.input2');
 
-    var searchField = $('.search');
+    var searchBar = $('.search_bar');
+    var searchField = $('#search');
     var toTopButton = $('#toTop');
     
     // Caching
@@ -106,7 +107,7 @@ $(document).ready(function() {
     // Scroll action
     $(window).on('scroll', function() {
         
-        showToTopButton();
+        scrollActions();
         
     })
     
@@ -142,6 +143,7 @@ $(document).ready(function() {
         
     });
 
+    populateHomepage()
     // Populate Homepage
     function populateHomepage() {
 
@@ -648,9 +650,10 @@ $(document).ready(function() {
     }
 
     // Show 'to top' button
-    function showToTopButton() {
+    function scrollActions() {
         
-        if ($(window).scrollTop() > 250) {
+        // Toggle 'to top' button
+        if ($(window).scrollTop() > 350) {
 
             toTopButton.fadeIn(200);
             
@@ -661,13 +664,26 @@ $(document).ready(function() {
         }
 
         // Show shadow on navbar
-        if($(window).scrollTop() > 0) {
+        if ($(window).scrollTop() > 0) {
             
             navbar.addClass('shadow');
 
         } else {
 
             navbar.removeClass('shadow');
+
+        }
+
+        // Fix search bar to top        
+        if (currentPage === 'list' && $(window).scrollTop() + navbar.innerHeight() > 180 && !searchBar.hasClass('active')) {
+            
+            searchBar.addClass('active');
+            $('.list_page h2').css({marginBottom: '66px'})
+
+        } else if (currentPage === 'list' && $(window).scrollTop() + navbar.innerHeight() <= 180 && searchBar.hasClass('active')) {
+
+            searchBar.removeClass('active');
+            $('.list_page h2').css({marginBottom: '0px'})
 
         }
         

@@ -33,10 +33,11 @@ a {
     background-color: #0782c8;
     overflow: hidden;
     z-index: 1;
+    transition: box-shadow 0.2s;
 }
 
 .nav.shadow {
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.301);
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.201);
 }
 
 .nav a {
@@ -105,12 +106,9 @@ a {
 
 /* Pages */
 .page {
+    display: none;
     padding: 25px;
     text-align: center;
-}
-
-.convert_page, .list_page {
-    display: none;
 }
 
 /* Homepage */
@@ -170,8 +168,6 @@ a {
     
     .link h2 {
         margin: 0px 0px 10px;
-        /* font-weight: normal; */
-        /* color: #0782c8; */
         text-align: left;
         padding-left: 45%;
     }
@@ -258,6 +254,10 @@ a {
     background-color: white;
 }
 
+option {
+    background-color: white;
+}
+
 .swap {
     display: inline-block;
     font-size: 24px;
@@ -269,7 +269,6 @@ a {
 
 .swap:link, .swap:visited {
     text-decoration: none;
-    /* font-weight: bold; */
     background-color: rgba(0, 0, 0, 0.115);
     color: #0782c8;
 }
@@ -352,7 +351,7 @@ a {
 
 /* List page*/
 .list_page h2 {
-    margin-top: 0px;
+    margin: 0px;
 }
 
 @media (max-width: 425px) {
@@ -361,25 +360,58 @@ a {
     }
 }
 
-.search {
-    font-size: 22px;
-    text-align: center;
-    border: none;
-    background-color: transparent;
-    font-family: 'Antic';
-    margin-bottom: 25px;
+/* Search */
+.search_bar {
+    position: relative;
+    width: 100%;
+    margin: 10px 0px 5px;
 }
 
-.search:focus {
+.search_bar .icon {
+    position: absolute;
+    top: 13px;
+    margin-left: 15px;
+    color: silver;
+}
+
+#search {
+    width: 150px;
+    margin: 0px;
+    padding: 12px 45px;
+    font-size: 22px;
+    text-align: center;
+    font-family: 'Antic';
+    background-color: white;
+    border: none;
     outline-width: 0;
 }
 
+.search_bar.active {
+    position: fixed;
+    top: 65px;
+    left: 0;
+    z-index: 1;
+    margin: 0px;
+}
+
+.search_bar.active #search {
+    width: 250px;
+    padding: 12px 45px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.201);
+}
+
+.search_bar.active .icon {
+    margin-left: 15px;
+}
+
+
 @media (max-width: 425px) {
-    .search {
-        margin-bottom: 15px;
+    .search_bar.active {
+        top: 75px;
     }
 }
 
+/* Rates */
 .rates {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -520,17 +552,20 @@ a {
     border: none;
     border-radius: 100%;
     outline: none;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.201);
     transition: background-color 0.2s;
 }
 
 #toTop:link, #toTop:visited {
     text-decoration: none;
     background-color: rgba(0, 0, 0, 0.115);
-    color: #0782c8;
+    background-color: #0782c8;
+    color: white;
 }
 
 #toTop:active {
-    background-color: rgba(0, 0, 0, 0.250);
+    background-color: #075a8a;
+
 }
 
 @media (max-width: 425px) {
