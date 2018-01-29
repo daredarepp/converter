@@ -388,7 +388,7 @@ option {
 
 .search_bar.active {
     position: fixed;
-    top: 65px;
+    top: 75px;
     left: 0;
     z-index: 1;
     margin: 0px;
@@ -397,7 +397,8 @@ option {
 .search_bar.active #search {
     width: 250px;
     padding: 12px 45px;
-    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.201);
+    background-color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.201);
 }
 
 .search_bar.active .icon {
@@ -407,7 +408,13 @@ option {
 
 @media (max-width: 425px) {
     .search_bar.active {
-        top: 75px;
+        top: 64px;
+        background-color: white;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.201);
+    }
+
+    .search_bar.active #search {
+        box-shadow: none;
     }
 }
 
@@ -552,7 +559,7 @@ option {
     border: none;
     border-radius: 100%;
     outline: none;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.201);
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.201);
     transition: background-color 0.2s;
 }
 
